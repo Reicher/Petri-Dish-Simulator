@@ -33,6 +33,10 @@ public class Bacteria {
         m_shape.setPosition(pos);
     }
     
+    public float getSize(){
+        return m_shape.getRadius();
+    }
+    
     private CircleShape m_shape;
     private RenderWindow m_window;
 }

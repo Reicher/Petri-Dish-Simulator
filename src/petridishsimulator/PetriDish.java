@@ -35,7 +35,8 @@ public class PetriDish {
         m_borderShape.setOutlineColor(Color.BLACK);
         
         m_bacteria = new ArrayList<Bacteria>();
-        createRandomBacteria();
+        for(int i = 0; i < 10; i = i +1)
+            createRandomBacteria();
     }
     
     public void draw(){
@@ -61,10 +62,13 @@ public class PetriDish {
                     new Vector2f(Math.abs(m_dishShape.getPosition().x - pos.x), 
                                  Math.abs(m_dishShape.getPosition().y - pos.y));
             
+            // is this a bad position?
+            posOk = true; 
             if(Math.sqrt(Math.pow(distVec.x, 2) + Math.pow(distVec.y, 2)) 
-                    < m_dishShape.getRadius())
-                posOk = true; 
-                
+                    > m_dishShape.getRadius()- tmp.getSize())
+                posOk = false; 
+            
+           
         }
         tmp.setPosition(pos);
         m_bacteria.add(tmp);

@@ -54,7 +54,7 @@ public class PetriDishSimulator {
             // Update things
             dt = clock.restart().asSeconds();
             
-            //Fill the window with red
+            //Fill the window with WHITE
             window.clear(Color.WHITE);
 
             // Draw things
