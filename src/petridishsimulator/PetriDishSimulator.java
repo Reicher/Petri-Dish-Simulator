@@ -53,6 +53,7 @@ public class PetriDishSimulator {
             
             // Update things
             dt = clock.restart().asSeconds();
+            petriDish.update(dt);
             
             //Fill the window with WHITE
             window.clear(Color.WHITE);
