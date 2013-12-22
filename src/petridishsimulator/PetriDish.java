@@ -1,0 +1,78 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package petridishsimulator;
+
+import org.jsfml.graphics.*;
+import org.jsfml.system.Vector2f;
+import java.util.*;
+/**
+ *
+ * @author regen
+ */
+public class PetriDish {
+    public PetriDish(RenderWindow window){
+        m_window = window;
+        
+        float lowerBorder = 40;
+        float petriEdge = 10;
+        float radius = window.getSize().y/2.0f - lowerBorder - petriEdge;
+        
+        // Dish shape
+        m_dishShape = new CircleShape(radius);
+        m_dishShape.setFillColor(new Color(230, 230, 230));
+        m_dishShape.setOutlineColor(new Color(200, 200, 200));
+        m_dishShape.setOutlineThickness(petriEdge);
+        m_dishShape.setOrigin(new Vector2f(radius+petriEdge, radius+petriEdge));
+        m_dishShape.setPosition(radius+petriEdge*2, radius+petriEdge*2);
+        
+        // Border shape around dish, maybe should be handled elsewhere
+        m_borderShape = new RectangleShape(new Vector2f(radius*2+petriEdge*2, 
+                                                        radius*2+petriEdge*2));
+        m_borderShape.setFillColor(Color.WHITE);
+        m_borderShape.setOutlineThickness(5);
+        m_borderShape.setOutlineColor(Color.BLACK);
+        
+        m_bacteria = new ArrayList<Bacteria>();
+        createRandomBacteria();
+    }
+    
+    public void draw(){
+        m_window.draw(m_borderShape);
+        m_window.draw(m_dishShape);
+        
+        for(Bacteria bacteria : m_bacteria){
+            bacteria.draw();
+        }
+    }
+    
+    public void createRandomBacteria()
+    {
+        Bacteria tmp = new Bacteria(m_window);
+        boolean posOk = false;
+        float maxPos = m_dishShape.getRadius() * 2.0f;
+        Vector2f pos = Vector2f.ZERO;
+        while(!posOk)
+        {
+            pos = new Vector2f((float)(Math.random() * maxPos), 
+                                        (float)(Math.random() * maxPos));
+            Vector2f distVec = 
+                    new Vector2f(Math.abs(m_dishShape.getPosition().x - pos.x), 
+                                 Math.abs(m_dishShape.getPosition().y - pos.y));
+            
+            if(Math.sqrt(Math.pow(distVec.x, 2) + Math.pow(distVec.y, 2)) 
+                    < m_dishShape.getRadius())
+                posOk = true; 
+                
+        }
+        tmp.setPosition(pos);
+        m_bacteria.add(tmp);
+    }
+    
+    private CircleShape m_dishShape;
+    private RectangleShape m_borderShape;
+    private RenderWindow m_window;
+    
+    private List<Bacteria> m_bacteria;
+}
