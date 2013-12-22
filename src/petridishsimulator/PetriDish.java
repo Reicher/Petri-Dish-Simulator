@@ -35,7 +35,7 @@ public class PetriDish {
         m_borderShape.setOutlineColor(Color.BLACK);
         
         m_bacteria = new ArrayList<Bacteria>();
-        for(int i = 0; i < 10; i = i +1)
+        for(int i = 0; i < 30; i = i +1)
             createRandomBacteria();
     }
     
@@ -52,26 +52,38 @@ public class PetriDish {
     {
         Bacteria tmp = new Bacteria(m_window);
         boolean posOk = false;
-        float maxPos = m_dishShape.getRadius() * 2.0f;
+        int tries = 0;
         Vector2f pos = Vector2f.ZERO;
-        while(!posOk)
+        while(!posOk && tries < 10)
         {
-            pos = new Vector2f((float)(Math.random() * maxPos), 
-                                        (float)(Math.random() * maxPos));
-            Vector2f distVec = 
-                    new Vector2f(Math.abs(m_dishShape.getPosition().x - pos.x), 
-                                 Math.abs(m_dishShape.getPosition().y - pos.y));
+            // Set initial position within the dish
+            posOk = true;
+            float t = (float)(Math.random() * Math.PI*2);
+            float r = (float)(Math.random() * m_dishShape.getRadius()) 
+                            - tmp.getSize() - m_dishShape.getOutlineThickness();
+
+            pos = Vector2f.add( m_dishShape.getPosition(), 
+                                HelperStuff.polar2Vec2(r, t));
             
-            // is this a bad position?
-            posOk = true; 
-            if(Math.sqrt(Math.pow(distVec.x, 2) + Math.pow(distVec.y, 2)) 
-                    > m_dishShape.getRadius()- tmp.getSize())
-                posOk = false; 
-            
-           
+            // Don't put bacteria on top of buddies!
+            float length2buddy; 
+            for(Bacteria bac : m_bacteria){
+                length2buddy = HelperStuff.Vector2length(
+                        new Vector2f(pos.x - bac.getPosition().x, 
+                                     pos.y - bac.getPosition().y));
+                if(length2buddy < (tmp.getSize() + bac.getSize())){
+                    posOk = false;
+                    break;
+                }
+            }
+            tries++;
         }
-        tmp.setPosition(pos);
-        m_bacteria.add(tmp);
+        
+        // did we find a spot to put it?
+        if(posOk){
+            tmp.setPosition(pos);
+            m_bacteria.add(tmp);
+        }
     }
     
     private CircleShape m_dishShape;

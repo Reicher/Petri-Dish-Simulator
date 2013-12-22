@@ -33,8 +33,12 @@ public class Bacteria {
         m_shape.setPosition(pos);
     }
     
+    public Vector2f getPosition(){
+        return m_shape.getPosition();
+    }
+    
     public float getSize(){
-        return m_shape.getRadius();
+        return m_shape.getRadius() + m_shape.getOutlineThickness();
     }
     
     private CircleShape m_shape;
