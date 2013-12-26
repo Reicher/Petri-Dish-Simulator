@@ -7,6 +7,7 @@ package petridishsimulator;
 import org.jsfml.graphics.*;
 import org.jsfml.system.Vector2f;
 import java.util.*;
+
 /**
  *
  * @author regen
@@ -56,10 +57,25 @@ public class PetriDish {
         }
     }
     
+    private Nutrient getClosestNutrient(Vector2f pos){
+        float closestDist = Float.MAX_VALUE;
+        float dist;
+        Nutrient closest = null;
+        for(Nutrient food : m_nutrient){
+            Vector2f foodVec = Vector2f.sub(pos, food.getPosition());
+            dist = HelperStuff.vector2length(foodVec) - food.getSize();
+            if(dist < closestDist){
+                closest = food;
+                closestDist = dist;
+            }
+        }
+        return closest;
+    }
+    
     public void update(float dt)
     {
-        for(Bacteria bacteria : m_bacteria){
-            bacteria.update(dt);
+        for(Bacteria bacteria : m_bacteria){     
+            bacteria.update(dt, getClosestNutrient(bacteria.getPosition()));
             if(bacteria.isDecayed())
                 m_bacteria.remove(bacteria);
         }

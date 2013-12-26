@@ -42,6 +42,14 @@ public class Nutrient {
         return m_isEaten;
     }
     
+    public Vector2f getPosition(){
+        return m_shape.getPosition();
+    }
+    
+    public float getSize(){
+        return m_shape.getRadius();
+    }
+    
     private RenderWindow m_window;
     private CircleShape m_shape;
     private float m_density;

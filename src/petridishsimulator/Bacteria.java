@@ -28,9 +28,9 @@ public class Bacteria {
         m_shape.setOrigin(new Vector2f(radius+membraneThickness, 
                                        radius+ membraneThickness));
         
-        m_activity = Activity.WANDERING;
+        m_activity = Activity.MOVING_TO_TARGET;
         m_energy = 10;
-        m_health = 1;
+        m_health = 10;
         stateOfDecay = 1.0f;
     }
     
@@ -38,47 +38,66 @@ public class Bacteria {
         m_window.draw(m_shape);
     }
     
-    public void update(float dt){
+    public void update(float dt, Nutrient closestFood){
         // Ugly as hell
         m_energy -= 0.5 * dt; // it exhausting to live
         switch(m_activity)
         {
-            case WANDERING:
-                m_energy -= 1 * dt;
-                break;
             case MOVING_TO_TARGET:
-                m_energy -= 2 * dt;
+                goToFood(dt, closestFood);
                 break;
             case EATING:
-                
+                m_energy -= 0.5 * dt;
                 break;
             case DEAD:
-                stateOfDecay -= dt*0.1;
-                m_fillColor = new Color(m_fillColor.r, 
-                                        m_fillColor.g, 
-                                        m_fillColor.b, 
-                                        (int)(m_fillColor.a * stateOfDecay));
-                m_outlineColor = new Color(m_outlineColor.r, 
-                                           m_outlineColor.g, 
-                                           m_outlineColor.b, 
-                                           (int)(m_outlineColor.a * stateOfDecay));
-                
-                m_shape.setFillColor(m_fillColor);
-                m_shape.setOutlineColor(m_outlineColor);
-                if(m_fillColor.a <= 0)
-                    m_activity = Activity.DECAYED;
+                decay(dt);
                 break;
             default:
         }
         
+        // No energy, starting to starve
         if(m_energy <= 0){
             m_health -= 1 * dt;
             m_energy = 0.0f;
         }
+        // No health left, dead!
         if(m_health <= 0){
             m_activity =  Activity.DEAD;
             m_health = 0.0f;
         }
+    }
+    
+    private void goToFood(float dt, Nutrient closestFood)
+    {
+        m_energy -= 2 * dt;
+        if(closestFood == null)
+            return;
+        
+        Vector2f distVec = Vector2f.sub(closestFood.getPosition(),
+            getPosition());
+        
+        Vector2f moveVec = HelperStuff.makeUnit(distVec);
+        m_shape.move(Vector2f.mul(moveVec, dt*10));
+        
+        if((HelperStuff.vector2length(distVec) - closestFood.getSize()) < 0)
+            m_activity = Activity.EATING;
+    }
+    
+    private void decay(float dt){
+        stateOfDecay -= dt*0.1;
+        m_fillColor = new Color(m_fillColor.r, 
+                        m_fillColor.g, 
+                        m_fillColor.b, 
+                        (int)(m_fillColor.a * stateOfDecay));
+        m_outlineColor = new Color(m_outlineColor.r, 
+                           m_outlineColor.g, 
+                           m_outlineColor.b, 
+                           (int)(m_outlineColor.a * stateOfDecay));
+
+        m_shape.setFillColor(m_fillColor);
+        m_shape.setOutlineColor(m_outlineColor);
+        if(m_fillColor.a <= 0)
+        m_activity = Activity.DECAYED;
     }
     
     public void setPosition(Vector2f pos){
