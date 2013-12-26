@@ -28,7 +28,7 @@ public class Bacteria {
         m_shape.setOrigin(new Vector2f(radius+membraneThickness, 
                                        radius+ membraneThickness));
         
-        m_activity = Activity.MOVING_TO_TARGET;
+        m_activity = Activity.GOTO_FOOD;
         m_energy = 10;
         m_health = 10;
         stateOfDecay = 1.0f;
@@ -38,16 +38,20 @@ public class Bacteria {
         m_window.draw(m_shape);
     }
     
-    public void update(float dt, Nutrient closestFood){
+    public Nutrient update(float dt, Nutrient closestFood){
         // Ugly as hell
         m_energy -= 0.5 * dt; // it exhausting to live
         switch(m_activity)
         {
-            case MOVING_TO_TARGET:
+            case GOTO_FOOD:
                 goToFood(dt, closestFood);
                 break;
             case EATING:
-                m_energy -= 0.5 * dt;
+                m_energy += 2.0 * dt;
+                if(foodStillthere(closestFood))
+                    closestFood.eatOf(dt);
+                else 
+                    m_activity =  Activity.GOTO_FOOD;
                 break;
             case DEAD:
                 decay(dt);
@@ -65,6 +69,23 @@ public class Bacteria {
             m_activity =  Activity.DEAD;
             m_health = 0.0f;
         }
+        
+        return closestFood;
+    }
+    
+    private boolean foodStillthere(Nutrient food)
+    {
+        if(food == null)
+            return false;
+        
+        float dist2Food = HelperStuff.vector2length(
+                Vector2f.sub(food.getPosition(), getPosition())) - 
+                food.getSize();
+        
+        if(dist2Food < 0)
+            return true;
+        
+        return false;
     }
     
     private void goToFood(float dt, Nutrient closestFood)
@@ -77,7 +98,7 @@ public class Bacteria {
             getPosition());
         
         Vector2f moveVec = HelperStuff.makeUnit(distVec);
-        m_shape.move(Vector2f.mul(moveVec, dt*10));
+        m_shape.move(Vector2f.mul(moveVec, dt*20));
         
         if((HelperStuff.vector2length(distVec) - closestFood.getSize()) < 0)
             m_activity = Activity.EATING;
@@ -127,6 +148,6 @@ public class Bacteria {
     private float stateOfDecay; 
     
     private enum Activity {
-    WANDERING, MOVING_TO_TARGET, EATING, SPLITTING, DEAD, DECAYED
+    WANDERING, GOTO_FOOD, EATING, SPLITTING, DEAD, DECAYED
     }
 }

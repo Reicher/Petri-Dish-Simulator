@@ -36,7 +36,7 @@ public class PetriDish {
         m_borderShape.setOutlineColor(Color.BLACK);
         
         m_bacteria = new ArrayList<Bacteria>();
-        for(int i = 0; i < 20; i = i +1)
+        for(int i = 0; i < 10; i = i +1)
             createRandomBacteria();
         
         m_nutrient = new ArrayList<Nutrient>();
@@ -74,15 +74,36 @@ public class PetriDish {
     
     public void update(float dt)
     {
-        for(Bacteria bacteria : m_bacteria){     
-            bacteria.update(dt, getClosestNutrient(bacteria.getPosition()));
-            if(bacteria.isDecayed())
-                m_bacteria.remove(bacteria);
+        for(Bacteria bacteria : m_bacteria){
+            
+            Nutrient tmp = bacteria.update(dt, 
+                    getClosestNutrient(bacteria.getPosition()));
+            
+            // So dumb
+            for(Nutrient food : m_nutrient)
+                if(food.getId() == tmp.getId())
+                    m_nutrient.set(m_nutrient.indexOf(food), tmp);
         }
         
-        for(Nutrient food : m_nutrient){
-            if(food.isEaten())
-                m_nutrient.remove(food);
+        removeDeadStuff();
+    }
+    
+    private void removeDeadStuff(){
+        
+        //Food
+        Iterator<Nutrient> foodIt = m_nutrient.iterator();
+        while (foodIt.hasNext()) {
+            Nutrient foodTmp = foodIt.next();
+            if(foodTmp.isEaten())
+                foodIt.remove();
+        }
+        
+        //bacteria
+        Iterator<Bacteria> bacIt = m_bacteria.iterator();
+        while (bacIt.hasNext()) {
+            Bacteria bacTmp = bacIt.next();
+            if(bacTmp.isDecayed())
+                bacIt.remove();
         }
     }
     
@@ -120,5 +141,7 @@ public class PetriDish {
     private RenderWindow m_window;
     
     private List<Bacteria> m_bacteria;
+    
     private List<Nutrient> m_nutrient;
+    
 }

@@ -21,6 +21,9 @@ public class Nutrient {
         m_shape.setFillColor(m_fillColor);
         m_density = dens;
         m_isEaten = false;
+        
+        m_id = maxId;
+        maxId++;
     }
     
     public void draw(){
@@ -29,11 +32,14 @@ public class Nutrient {
     
     public void eatOf(float dt){
         
-        m_density -= 0.05 * dt;
+        m_density -= 0.01 * dt;
         m_fillColor = new Color(m_fillColor.r, 
                         m_fillColor.g, 
                         m_fillColor.b, 
                         (int)(m_density*255.0f));
+        
+        m_shape.setFillColor(m_fillColor);
+        
         if(m_density <= 0)
             m_isEaten = true;
     }
@@ -50,10 +56,17 @@ public class Nutrient {
         return m_shape.getRadius();
     }
     
+    public int getId(){
+        return m_id;
+    }
+    
     private RenderWindow m_window;
     private CircleShape m_shape;
     private float m_density;
     private Color m_fillColor;
+    
+    private int m_id;
+    private static int maxId = 0;
     
     private boolean m_isEaten;
 }
