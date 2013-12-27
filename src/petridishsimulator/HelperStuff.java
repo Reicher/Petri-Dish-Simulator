@@ -17,6 +17,12 @@ public class HelperStuff {
                             (float)(r * Math.sin(t)));
     }
     
+    public static Vector2f getPosWithin(Vector2f org, float dist)
+    {
+        float t = (float)(Math.random() * Math.PI*2);
+        return Vector2f.add(org, polar2Vec2(dist, t));
+    }
+    
     public static float distance(Vector2f first, Vector2f second){
         return vector2length( Vector2f.sub(first, second));
     }

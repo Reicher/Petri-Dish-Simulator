@@ -41,9 +41,9 @@ public class Nutrient {
         }
     }
     
-    public void eatOf(float dt){
+    public void eatOf(float biteSize){
         
-        m_density -= 0.01 * dt;
+        m_density -= 0.01 * biteSize;
         updateColor();
         
         if(m_density <= 0)

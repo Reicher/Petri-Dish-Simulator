@@ -28,7 +28,7 @@ public class PetriDish {
 
         
         m_bacteria = new ArrayList<Bacteria>();
-        for(int i = 0; i < 10; i = i +1)
+        for(int i = 0; i < 1; i = i +1)
             createRandomBacteria();
         
         m_nutrient = new ArrayList<Nutrient>();  
@@ -67,17 +67,28 @@ public class PetriDish {
     
     public void update(float dt)
     {
-        for(Bacteria bacteria : m_bacteria){
-            
-            Nutrient tmp = bacteria.update(dt, 
-                    getClosestNutrient(bacteria.getPosition()));
-            
-            // So dumb, fucking java
-            for(Nutrient food : m_nutrient)
-                if(food.getId() == tmp.getId())
-                    m_nutrient.set(m_nutrient.indexOf(food), tmp);
-        }
+        List<Bacteria> newGuys = new ArrayList<Bacteria>();
         
+        for(Bacteria bacTmp : m_bacteria){
+            bacTmp.update(dt, getClosestNutrient(bacTmp.getPosition()));
+
+            if(bacTmp.getActivity() == Bacteria.Activity.EAT){
+                Nutrient tmp = bacTmp.Eat(dt);
+                // So dumb, fucking java
+                for(Nutrient food : m_nutrient)
+                    if(food.getId() == tmp.getId())
+                        m_nutrient.set(m_nutrient.indexOf(food), tmp);
+            }
+            else if(bacTmp.getActivity() == Bacteria.Activity.SPLIT)
+                newGuys.add(bacTmp.Split(dt));
+            else if(bacTmp.getActivity() == Bacteria.Activity.DEAD)
+               bacTmp.decay(dt);
+            else if(bacTmp.getActivity() == Bacteria.Activity.MOVE_TO_FOOD)
+                bacTmp.moveToFood(dt);
+        }
+        m_bacteria.addAll(newGuys);
+        
+        removeDeadStuff();
         
         for(Nutrient food : m_nutrient)
             food.update(dt);
@@ -91,7 +102,7 @@ public class PetriDish {
         else
             m_foodClock += dt;
         
-        removeDeadStuff();
+
     }
     
     private void removeDeadStuff(){
@@ -108,7 +119,7 @@ public class PetriDish {
         Iterator<Bacteria> bacIt = m_bacteria.iterator();
         while (bacIt.hasNext()) {
             Bacteria bacTmp = bacIt.next();
-            if(bacTmp.isDecayed())
+            if(bacTmp.getActivity() == Bacteria.Activity.DECAYED)
                 bacIt.remove();
         }
     }
