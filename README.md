@@ -11,3 +11,15 @@ Ideas:
 * Bacteria have energy that can be used to live, move, eat, split.
 * Time is a variable that can be speeded up. 
 * GRAPHS loads of graphs. Graphs are awesome.
+
+Right now:
+* Crude GUI base
+* Bacteria with energy, health and 5 types of genes (SIZE, ENERGY_STORAGE, MEMBRANE, RED, GREEN, BLUE)
+* Confusing and crude AI, bacteria seek up food, eat and split when they feeling good enough.
+* Nutrients growing on the dish
+
+Next ToDo's:
+* Fine tune how the genes should interact with speed, eating pace etc.
+* Add time panel for speeding up simulation
+* Add first infopanel elements like Population size etc.
+* Refractor code...
