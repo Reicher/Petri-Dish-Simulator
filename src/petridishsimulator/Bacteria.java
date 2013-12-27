@@ -12,9 +12,7 @@ import org.jsfml.system.Vector2f;
  */
 
 public class Bacteria {
-    public Bacteria(RenderWindow window){
-        m_window = window;
-        
+    public Bacteria(){
         float radius = 20;
         float membraneThickness = 3;
         m_fillColor = Color.MAGENTA;
@@ -34,8 +32,8 @@ public class Bacteria {
         stateOfDecay = 1.0f;
     }
     
-    public void draw(){
-        m_window.draw(m_shape);
+    public void draw(RenderWindow window){
+        window.draw(m_shape);
     }
     
     public Nutrient update(float dt, Nutrient closestFood){
@@ -78,8 +76,8 @@ public class Bacteria {
         if(food == null)
             return false;
         
-        float dist2Food = HelperStuff.vector2length(
-                Vector2f.sub(food.getPosition(), getPosition())) - 
+        float dist2Food = HelperStuff.distance(
+                food.getPosition(), getPosition()) - 
                 food.getSize();
         
         if(dist2Food < 0)

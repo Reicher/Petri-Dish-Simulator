@@ -5,7 +5,8 @@
 package petridishsimulator;
 
 import org.jsfml.graphics.*;
-import org.jsfml.system.Vector2f;
+import org.jsfml.system.*;
+
 import java.util.*;
 
 /**
@@ -13,47 +14,40 @@ import java.util.*;
  * @author regen
  */
 public class PetriDish {
-    public PetriDish(RenderWindow window){
-        m_window = window;
-        
-        float lowerBorder = 40;
-        float petriEdge = 10;
-        float radius = window.getSize().y/2.0f - lowerBorder - petriEdge;
+    public PetriDish(float size, Vector2f pos){
+        float radius = size/2.0f;
+        float petriEdge = -5;
         
         // Dish shape
         m_dishShape = new CircleShape(radius);
-        m_dishShape.setFillColor(new Color(230, 230, 230));
-        m_dishShape.setOutlineColor(new Color(200, 200, 200));
+        m_dishShape.setFillColor(new Color(230, 230, 230, 150));
+        m_dishShape.setOutlineColor(new Color(200, 200, 200, 200));
         m_dishShape.setOutlineThickness(petriEdge);
-        m_dishShape.setOrigin(new Vector2f(radius+petriEdge, radius+petriEdge));
-        m_dishShape.setPosition(radius+petriEdge*2, radius+petriEdge*2);
-        
-        // Border shape around dish, maybe should be handled elsewhere
-        m_borderShape = new RectangleShape(new Vector2f(radius*2+petriEdge*2, 
-                                                        radius*2+petriEdge*2));
-        m_borderShape.setFillColor(Color.WHITE);
-        m_borderShape.setOutlineThickness(5);
-        m_borderShape.setOutlineColor(Color.BLACK);
+        m_dishShape.setPosition(pos.x, pos.y);
+        m_centre = new Vector2f(pos.x + radius, pos.y + radius);
+
         
         m_bacteria = new ArrayList<Bacteria>();
         for(int i = 0; i < 10; i = i +1)
             createRandomBacteria();
         
-        m_nutrient = new ArrayList<Nutrient>();
+        m_nutrient = new ArrayList<Nutrient>();  
         for(int i = 0; i < 10; i = i +1)
             createRandomNutrient();
+        
+        m_foodClock = 0.0f;
+        m_nextNutrient = (float)Math.random() * 5.0f;
     }
     
-    public void draw(){
-        m_window.draw(m_borderShape);
-        m_window.draw(m_dishShape);
+    public void draw(RenderWindow window){
+        window.draw(m_dishShape);
         
         for(Nutrient food : m_nutrient){
-            food.draw();
+            food.draw(window);
         }
         
         for(Bacteria bacteria : m_bacteria){
-            bacteria.draw();
+            bacteria.draw(window);
         }
     }
     
@@ -62,8 +56,7 @@ public class PetriDish {
         float dist;
         Nutrient closest = null;
         for(Nutrient food : m_nutrient){
-            Vector2f foodVec = Vector2f.sub(pos, food.getPosition());
-            dist = HelperStuff.vector2length(foodVec) - food.getSize();
+            dist = HelperStuff.distance(pos, food.getPosition()) - food.getSize();
             if(dist < closestDist){
                 closest = food;
                 closestDist = dist;
@@ -79,11 +72,24 @@ public class PetriDish {
             Nutrient tmp = bacteria.update(dt, 
                     getClosestNutrient(bacteria.getPosition()));
             
-            // So dumb
+            // So dumb, fucking java
             for(Nutrient food : m_nutrient)
                 if(food.getId() == tmp.getId())
                     m_nutrient.set(m_nutrient.indexOf(food), tmp);
         }
+        
+        
+        for(Nutrient food : m_nutrient)
+            food.update(dt);
+        
+        //new food!
+        if(m_nextNutrient <= m_foodClock){
+            createRandomNutrient();
+            m_foodClock = 0.0f;
+            m_nextNutrient = (float)Math.random() * 5.0f;
+        }
+        else
+            m_foodClock += dt;
         
         removeDeadStuff();
     }
@@ -109,26 +115,21 @@ public class PetriDish {
     
     private Vector2f getRandomPositionWithinDish(float size){
         float t = (float)(Math.random() * Math.PI*2);
-        float r = (float)(Math.random() * m_dishShape.getRadius()) 
-                        - (size - m_dishShape.getOutlineThickness());
+        float r = (float)(Math.random() * m_dishShape.getRadius() - size);
 
-        return Vector2f.add( m_dishShape.getPosition(), 
-                             HelperStuff.polar2Vec2(r, t));
+        return Vector2f.add( m_centre, HelperStuff.polar2Vec2(r, t));
     }
     
     private void createRandomNutrient(){
         float size = 10.0f + (float)Math.random() * 60.0f;
-        float density = 0.1f + (float)Math.random() * 0.6f;
-        Nutrient tmp = new Nutrient(  m_window, 
-                                      getRandomPositionWithinDish(size),
-                                      size, 
-                                      0.4f);
+        Nutrient tmp = new Nutrient( getRandomPositionWithinDish(size),
+                                     size);
         m_nutrient.add(tmp);
     }
     
     private void createRandomBacteria()
     {
-        Bacteria tmp = new Bacteria(m_window);
+        Bacteria tmp = new Bacteria();
 
         // Set initial position within the dish
         tmp.setPosition(getRandomPositionWithinDish(tmp.getSize()));
@@ -137,11 +138,13 @@ public class PetriDish {
     }
     
     private CircleShape m_dishShape;
-    private RectangleShape m_borderShape;
-    private RenderWindow m_window;
+    Vector2f m_centre; 
     
     private List<Bacteria> m_bacteria;
     
     private List<Nutrient> m_nutrient;
+    
+    private float m_nextNutrient;
+    private float m_foodClock;
     
 }
