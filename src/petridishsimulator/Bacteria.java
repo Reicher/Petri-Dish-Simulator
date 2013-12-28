@@ -27,7 +27,7 @@ public class Bacteria {
         m_fillColor = new Color((int) m_dNA.getFenotype(DNA.Fenotype.RED), 
                         (int)m_dNA.getFenotype(DNA.Fenotype.GREEN), 
                         (int)m_dNA.getFenotype(DNA.Fenotype.BLUE), 
-                        255);
+                        180);
               
         m_outlineColor = Color.BLACK;
         
@@ -40,8 +40,11 @@ public class Bacteria {
                 m_shape.getRadius()+m_shape.getOutlineThickness(),
                 m_shape.getRadius()+m_shape.getOutlineThickness()));
         
-        m_energy = 6.0f;
-        m_health = 5.0f;
+        m_maxHealth = m_dNA.getFenotype(DNA.Fenotype.MAX_HEALTH);
+        m_maxEnergy = m_dNA.getFenotype(DNA.Fenotype.ENERGY_STORAGE);
+        
+        m_energy = m_maxEnergy * 0.5f;
+        m_health = m_maxHealth * 0.5f;
         stateOfDecay = 1.0f;
     }
     
@@ -59,8 +62,8 @@ public class Bacteria {
         if(m_health <= 0)      
             m_activity =  Activity.DEAD;
         // SPLIT
-        else if(m_energy >= m_dNA.getFenotype(DNA.Fenotype.ENERGY_STORAGE)
-            && m_health >= 10.0f)
+        else if(m_energy >= m_maxEnergy * 0.9f
+            && m_health >= m_maxHealth * 0.9f)
             m_activity =  Activity.SPLIT;
         // EAT
         else if(foodInReach(closestFood))
@@ -73,17 +76,19 @@ public class Bacteria {
         if(m_energy <= 0){
             m_health -= 1 * dt;
             m_energy = 0.0f;
-        } else if (m_energy >= m_dNA.getFenotype(DNA.Fenotype.ENERGY_STORAGE))
-            m_energy = m_dNA.getFenotype(DNA.Fenotype.ENERGY_STORAGE);
+        } else if (m_energy >= m_maxEnergy)
+            m_energy = m_maxEnergy;
         
         // Health, hold within limits and die when 0, regenerate otherwise
-        if(m_energy > 0 && m_health < 10.0f){
-            m_health += 0.5 * dt;
-            m_energy -= 0.5 * dt;
-            if(m_health > 10.0f)
-                m_health = 10.0f;
+        if(m_energy > 0 && m_health <m_maxHealth){
+            m_health += 0.4 * dt;
+            m_energy -= 0.2 * dt;
+            if(m_health > m_maxHealth)
+                m_health =m_maxHealth;
         }
         m_energy -= 0.5 * dt; // it exhausting to live
+        
+        //System.out.println("H: " + m_health + " E: " + m_energy);
     }
     
             
@@ -102,8 +107,9 @@ public class Bacteria {
                                                  tmp.getSize() + getSize()));
         tmp.setPosition( HelperStuff.getPosWithin(getPosition(), 
                 getSize() + tmp.getSize()));
-        m_energy = m_dNA.getFenotype(DNA.Fenotype.ENERGY_STORAGE) * 0.75f;
-        m_health = 10 * 0.5f;
+        
+        m_energy = m_maxEnergy * 0.5f;
+        m_health = m_maxHealth * 0.5f;
         
         return tmp;
     }
@@ -113,13 +119,13 @@ public class Bacteria {
         if(m_targetFood == null)
             return;
         
-        m_energy -=m_dNA.getFenotype(DNA.Fenotype.SIZE) / 20.0f * dt;
+        m_energy -= getSize() / 20.0f * dt;
         
         Vector2f distVec = Vector2f.sub(m_targetFood.getPosition(),
             getPosition());
         
         Vector2f moveVec = HelperStuff.makeUnit(distVec);
-        float speed = (40.0f / m_dNA.getFenotype(DNA.Fenotype.SIZE)) * 20.0f;
+        float speed = (40.0f / getSize()) * 20.0f;
         m_shape.move(Vector2f.mul(moveVec, dt*speed));
     }
     
@@ -175,6 +181,9 @@ public class Bacteria {
     }
     
     private CircleShape m_shape;
+     
+    private float m_maxHealth;
+    private float m_maxEnergy;
     
     private float m_health;
     private float m_energy;

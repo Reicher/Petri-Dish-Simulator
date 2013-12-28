@@ -32,11 +32,11 @@ public class PetriDish {
             createRandomBacteria();
         
         m_nutrient = new ArrayList<Nutrient>();  
-        for(int i = 0; i < 10; i = i +1)
+        for(int i = 0; i < 20; i = i +1)
             createRandomNutrient();
         
         m_foodClock = 0.0f;
-        m_nextNutrient = (float)Math.random() * 5.0f;
+        m_nextNutrient = 0.0f;
     }
     
     public void draw(RenderWindow window){
@@ -97,7 +97,7 @@ public class PetriDish {
         if(m_nextNutrient <= m_foodClock){
             createRandomNutrient();
             m_foodClock = 0.0f;
-            m_nextNutrient = (float)Math.random() * 5.0f;
+            m_nextNutrient = (float)Math.random() * 1.0f;
         }
         else
             m_foodClock += dt;
@@ -132,7 +132,7 @@ public class PetriDish {
     }
     
     private void createRandomNutrient(){
-        float size = 10.0f + (float)Math.random() * 60.0f;
+        float size = 3.0f + (float)Math.random() * 20.0f;
         Nutrient tmp = new Nutrient( getRandomPositionWithinDish(size),
                                      size);
         m_nutrient.add(tmp);

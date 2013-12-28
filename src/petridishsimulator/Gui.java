@@ -7,6 +7,7 @@ package petridishsimulator;
 import org.jsfml.graphics.*;
 import org.jsfml.window.*;
 import org.jsfml.system.*;
+import org.jsfml.window.event.Event; 
 
 import java.nio.file.Paths;
 import java.io.IOException;
@@ -16,7 +17,8 @@ import java.io.IOException;
  */
 public class Gui {
     
-    Gui() throws IOException {
+    Gui(RenderWindow window) throws IOException {
+        m_window = window;
         
         //Create Play Panel
         Texture playTex = new Texture();
@@ -42,17 +44,45 @@ public class Gui {
         
     }
     
-    public void draw(RenderWindow window){
-        m_playPanel.draw(window);
-        m_timePanel.draw(window);
-        m_infoPanel.draw(window);
+    public void draw(){
+        m_playPanel.draw(m_window);
+        m_timePanel.draw(m_window);
+        m_infoPanel.draw(m_window);
     }
     
-    public void update(float dt){
-        m_playPanel.update(dt);
-        m_timePanel.update(dt);
-        m_infoPanel.update(dt);
+    public void update(){
+
+        //Handle events
+        for(Event event : m_window.pollEvents()) {
+            switch(event.type)
+            {
+                case CLOSED:
+                    m_window.close();
+                    break;
+                case KEY_PRESSED:
+                    if(event.asKeyEvent().key.equals(Keyboard.Key.ESCAPE))
+                        m_window.close();
+                    else if(  event.asKeyEvent().key.equals(Keyboard.Key.P))
+                        m_timePanel.togglePaus();
+                    else if(  event.asKeyEvent().key.equals(Keyboard.Key.NUM1))
+                        m_timePanel.setSpeed(1.0f);
+                    else if(  event.asKeyEvent().key.equals(Keyboard.Key.NUM2))
+                        m_timePanel.setSpeed(2.0f);
+                    else if(  event.asKeyEvent().key.equals(Keyboard.Key.NUM3))
+                        m_timePanel.setSpeed(5.0f);
+                    break;                   
+            }
+        }
+            
+        m_timePanel.update(); // update time
+        
+        m_playPanel.update(m_timePanel.getDt());
+        m_infoPanel.update(m_timePanel.getDt());
+        
+        
     }
+    
+    RenderWindow m_window; 
     
     PlayPanel m_playPanel;
     TimePanel m_timePanel;
