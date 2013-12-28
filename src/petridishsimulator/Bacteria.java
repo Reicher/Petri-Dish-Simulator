@@ -13,46 +13,35 @@ import org.jsfml.system.Vector2f;
 
 public class Bacteria {
     public Bacteria(){
-        m_size = new Gene(Gene.Fenotype.SIZE);
-        m_energyStorage = new Gene(Gene.Fenotype.ENERGY_STORAGE);
-        m_membrane = new Gene(Gene.Fenotype.MEMBRANE);
-        m_red = new Gene(Gene.Fenotype.RED);
-        m_green = new Gene(Gene.Fenotype.GREEN);
-        m_blue = new Gene(Gene.Fenotype.BLUE);
-        
+        m_dNA = new DNA();
         init();
     }
     
     public Bacteria(Bacteria copy)
     {
-        m_size = new Gene(copy.m_size);
-        m_energyStorage = new Gene(copy.m_energyStorage);
-        m_membrane = new Gene(copy.m_membrane);
-        m_red = new Gene(copy.m_red);
-        m_green = new Gene(copy.m_green);
-        m_blue = new Gene(copy.m_blue);
-
+        m_dNA = new DNA(copy.getDna());
         init();
     }
     
     private void init(){
-        m_fillColor = new Color((int)m_red.getValue(), 
-                        (int)m_green.getValue(), 
-                        (int)m_blue.getValue(), 
+        m_fillColor = new Color((int) m_dNA.getFenotype(DNA.Fenotype.RED), 
+                        (int)m_dNA.getFenotype(DNA.Fenotype.GREEN), 
+                        (int)m_dNA.getFenotype(DNA.Fenotype.BLUE), 
                         255);
               
         m_outlineColor = Color.BLACK;
         
-        m_shape = new CircleShape(m_size.getValue());
+        m_shape = new CircleShape(m_dNA.getFenotype(DNA.Fenotype.SIZE));
         m_shape.setFillColor(m_fillColor);
         m_shape.setOutlineColor(m_outlineColor);
-        m_shape.setOutlineThickness(m_membrane.getValue());
+        m_shape.setOutlineThickness(m_dNA.getFenotype(DNA.Fenotype.MEMBRANE));
         
-        m_shape.setOrigin(new Vector2f(m_size.getValue()+m_membrane.getValue(), 
-                                       m_size.getValue()+m_membrane.getValue()));
+        m_shape.setOrigin(new Vector2f(
+                m_shape.getRadius()+m_shape.getOutlineThickness(),
+                m_shape.getRadius()+m_shape.getOutlineThickness()));
         
         m_energy = 6.0f;
-        m_health = 10.0f;
+        m_health = 5.0f;
         stateOfDecay = 1.0f;
     }
     
@@ -70,7 +59,8 @@ public class Bacteria {
         if(m_health <= 0)      
             m_activity =  Activity.DEAD;
         // SPLIT
-        else if(m_energy >= m_energyStorage.getValue() && m_health >= 10.0f)
+        else if(m_energy >= m_dNA.getFenotype(DNA.Fenotype.ENERGY_STORAGE)
+            && m_health >= 10.0f)
             m_activity =  Activity.SPLIT;
         // EAT
         else if(foodInReach(closestFood))
@@ -83,34 +73,37 @@ public class Bacteria {
         if(m_energy <= 0){
             m_health -= 1 * dt;
             m_energy = 0.0f;
-        } else if (m_energy >= m_energyStorage.getValue())
-            m_energy = m_energyStorage.getValue();
+        } else if (m_energy >= m_dNA.getFenotype(DNA.Fenotype.ENERGY_STORAGE))
+            m_energy = m_dNA.getFenotype(DNA.Fenotype.ENERGY_STORAGE);
         
         // Health, hold within limits and die when 0, regenerate otherwise
         if(m_energy > 0 && m_health < 10.0f){
             m_health += 0.5 * dt;
             m_energy -= 0.5 * dt;
-            if(m_health > 100)
-                m_health = 100;
+            if(m_health > 10.0f)
+                m_health = 10.0f;
         }
         m_energy -= 0.5 * dt; // it exhausting to live
-        //System.out.println("H: " + m_health + " E: " + m_energy);
     }
     
             
     public Nutrient Eat(float dt){
-            float bite = m_size.getValue() / 20.0f * dt;
-            m_energy += bite;
-            m_targetFood.eatOf(bite);
-            return m_targetFood;
+
+        float bite = m_dNA.getFenotype(DNA.Fenotype.SIZE) / 20.0f * dt;
+        m_energy += bite;
+        m_targetFood.eatOf(bite);
+        return m_targetFood;
     }
     
     public Bacteria Split(float dt){
+        System.out.println("Splitting");
         Bacteria tmp = new Bacteria(this); 
         tmp.setPosition(HelperStuff.getPosWithin(getPosition(), 
                                                  tmp.getSize() + getSize()));
-        m_energy = m_energyStorage.getValue() * 0.75f;
-        m_health = 10 * 0.75f;
+        tmp.setPosition( HelperStuff.getPosWithin(getPosition(), 
+                getSize() + tmp.getSize()));
+        m_energy = m_dNA.getFenotype(DNA.Fenotype.ENERGY_STORAGE) * 0.75f;
+        m_health = 10 * 0.5f;
         
         return tmp;
     }
@@ -120,13 +113,13 @@ public class Bacteria {
         if(m_targetFood == null)
             return;
         
-        m_energy -= m_size.getValue() / 20.0f * dt;
+        m_energy -=m_dNA.getFenotype(DNA.Fenotype.SIZE) / 20.0f * dt;
         
         Vector2f distVec = Vector2f.sub(m_targetFood.getPosition(),
             getPosition());
         
         Vector2f moveVec = HelperStuff.makeUnit(distVec);
-        float speed = (40.0f / m_size.getValue()) * 20.0f;
+        float speed = (40.0f / m_dNA.getFenotype(DNA.Fenotype.SIZE)) * 20.0f;
         m_shape.move(Vector2f.mul(moveVec, dt*speed));
     }
     
@@ -173,6 +166,10 @@ public class Bacteria {
         return m_shape.getRadius() + m_shape.getOutlineThickness();
     }
     
+    private DNA getDna(){
+        return m_dNA;
+    }
+    
     public Activity getActivity(){
         return m_activity;
     }
@@ -187,13 +184,8 @@ public class Bacteria {
     private float stateOfDecay; 
     
     private Nutrient m_targetFood;
-    
-    public Gene m_size;
-    public Gene m_energyStorage;
-    public Gene m_membrane;
-    public Gene m_red;
-    public Gene m_green;
-    public Gene m_blue;
+   
+    private DNA m_dNA;
     
     public enum Activity {
     MOVE_TO_FOOD, EAT, SPLIT, DEAD, DECAYED
