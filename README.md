@@ -6,6 +6,7 @@ This is my first take on java and the JFSML library (http://jsfml.org/).
 
 Controls:
 'P' = Pause
+
 '1' - '3' = Speed x1, x2, x5
 
 Ideas:
