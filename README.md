@@ -4,6 +4,10 @@ Petri-Dish-Simulator
 The life on a petri dish up close! The idea is to show bacteria live, die and evolve on a Petri dish!
 This is my first take on java and the JFSML library (http://jsfml.org/).
 
+Controls:
+'P' = Pause
+'1' - '3' = Speed x1, x2, x5
+
 Ideas:
 * Bacteria multiply by splitting, creating a clone (sometimes it's a bit mutated)
 * Bacteria have different features like size, color, outer-shell thickness etc. 
