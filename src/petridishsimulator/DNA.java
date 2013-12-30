@@ -3,9 +3,6 @@
  * and open the template in the editor.
  */
 package petridishsimulator;
-
-
-import org.jsfml.system.Vector2f;
 /**
  *
  * @author regen
@@ -15,46 +12,52 @@ public class DNA {
     public DNA(){
         setLimits();
 
-        for(int feno = 0; feno != Fenotype.MUTATION_POWER.ordinal(); feno++){ 
+        for(int feno = 0; feno != Fenotype.MAX_HEALTH.ordinal(); feno++){ 
         m_genes[feno] = m_minLimit[feno]
                 + ((float)Math.random() 
                     * (m_maxLimit[feno]
                     - m_minLimit[feno]));
         }
-       
        setRelativeDNA();
+       
+       //System.out.print(this);
     }
     
     public DNA(DNA copy){
         setLimits();
         
-        float mutationChance = 0.2f;
-        float mutationPower = 0.2f;
-
-        for(int feno = 0; feno != Fenotype.MUTATION_POWER.ordinal(); feno++){ 
+        float mutationChance = copy.getFenotype(Fenotype.MUTATION_CHANCE);
+        float mutationPower = copy.getFenotype(Fenotype.MUTATION_POWER);
+        
+        //System.out.println("Chance: " + mutationChance);
+        //System.out.println("Power: " + mutationPower);
+        
+        for(Fenotype feno : Fenotype.values()){ 
+             
+            if(feno == Fenotype.MAX_HEALTH)
+                break; // dont not do this kind of mutation on relative genes.
+            
             //BLACK MUTATION MAGIC
-            if((float)Math.random() > 
-                    (1.0f-copy.getFenotype(Fenotype.MUTATION_CHANCE))){
+            if((float)Math.random() > (1.0f-mutationChance)){
                 
-                float deviation = (m_maxLimit[feno] 
-                                - m_minLimit[feno] )
-                                * copy.getFenotype(Fenotype.MUTATION_POWER) 
-                                * 0.5f;
+                float deviation = (m_maxLimit[feno.ordinal()] 
+                                - m_minLimit[feno.ordinal()] )
+                                * mutationPower * 0.5f;
 
-                float lower = copy.getFenotype(Fenotype.values()[feno]) - deviation;
-                float upper = copy.getFenotype(Fenotype.values()[feno]) + deviation;
+                float lower = copy.getFenotype(feno) - deviation;
+                float upper = copy.getFenotype(feno) + deviation;
 
-                if(lower > m_minLimit[feno])
-                    lower = m_minLimit[feno];
+                if(lower < m_minLimit[feno.ordinal()])
+                    lower = m_minLimit[feno.ordinal()];
                 
-                if(upper > m_maxLimit[feno])
-                    upper = m_maxLimit[feno];
+                if(upper > m_maxLimit[feno.ordinal()])
+                    upper = m_maxLimit[feno.ordinal()];
 
-
-                m_genes[feno] = lower + ((float)Math.random() * (upper - lower));
+                m_genes[feno.ordinal()] = 
+                        lower + ((float)Math.random() * (upper - lower));
             }
             else
-                m_genes[feno]  = copy.getFenotype(Fenotype.values()[feno]);
+                m_genes[feno.ordinal()]  = copy.getFenotype(feno);
         }
         setRelativeDNA();
     }
@@ -104,12 +107,12 @@ public class DNA {
                     m_maxLimit[Fenotype.BLUE.ordinal()] = 255.0f;
                 break;
                 case MUTATION_CHANCE:
-                    m_minLimit[Fenotype.BLUE.ordinal()] = 0.0f;
-                    m_maxLimit[Fenotype.BLUE.ordinal()] = 1.0f;
+                    m_minLimit[Fenotype.MUTATION_CHANCE.ordinal()] = 0.1f;
+                    m_maxLimit[Fenotype.MUTATION_CHANCE.ordinal()] = 0.7f;
                 break;
                 case MUTATION_POWER:
-                    m_minLimit[Fenotype.BLUE.ordinal()] = 0.0f;
-                    m_maxLimit[Fenotype.BLUE.ordinal()] = 1.0f;
+                    m_minLimit[Fenotype.MUTATION_POWER.ordinal()] = 0.1f;
+                    m_maxLimit[Fenotype.MUTATION_POWER.ordinal()] = 0.7f;
                 break;
                 // END OF RANDOM FENOTYPES
                 case MAX_HEALTH:
@@ -129,7 +132,6 @@ public class DNA {
     }
     
     public float getFenotype(Fenotype type){
-        
         return m_genes[type.ordinal()];
     }
     
@@ -137,6 +139,15 @@ public class DNA {
         float value = getFenotype(type) - m_minLimit[type.ordinal()];
         float range = m_maxLimit[type.ordinal()]- m_minLimit[type.ordinal()];
         return value / range;
+    }
+    
+    public String toString(){
+        String string = new String();
+        for(Fenotype feno : Fenotype.values())
+        {
+            string += feno.toString() + ": " + m_genes[feno.ordinal()] + "\n";
+        }
+        return string;
     }
     
     private float[] m_genes = new float[Fenotype.values().length];

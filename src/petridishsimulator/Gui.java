@@ -21,27 +21,16 @@ public class Gui {
         m_window = window;
         
         //Create Play Panel
-        Texture playTex = new Texture();
-        playTex.loadFromFile(Paths.get("Resources/PlayPanel.png"));
         m_playPanel = new PlayPanel(new Vector2f(500, 500), 
-                                    new Vector2f(0, 0), 
-                                    playTex);
+                                    new Vector2f(0, 0));
         
         //Create Time Panel
-        Texture timeTex = new Texture();
-        timeTex.loadFromFile(Paths.get("Resources/TimePanel.png"));
         m_timePanel = new TimePanel(new Vector2f(500, 100), 
-                                    new Vector2f(0, 500), 
-                                    timeTex);
+                                    new Vector2f(0, 500));
         
         //Create Time Panel
-        Texture infoTex = new Texture();
-        infoTex.loadFromFile(Paths.get("Resources/InfoPanel.png"));
         m_infoPanel = new InfoPanel(new Vector2f(300, 600), 
-                                    new Vector2f(500, 0), 
-                                    infoTex);
-        
-        
+                                    new Vector2f(500, 0));        
     }
     
     public void draw(){
@@ -62,15 +51,19 @@ public class Gui {
                 case KEY_PRESSED:
                     if(event.asKeyEvent().key.equals(Keyboard.Key.ESCAPE))
                         m_window.close();
-                    else if(  event.asKeyEvent().key.equals(Keyboard.Key.P))
-                        m_timePanel.togglePaus();
                     else if(  event.asKeyEvent().key.equals(Keyboard.Key.NUM1))
                         m_timePanel.setSpeed(1.0f);
                     else if(  event.asKeyEvent().key.equals(Keyboard.Key.NUM2))
                         m_timePanel.setSpeed(2.0f);
                     else if(  event.asKeyEvent().key.equals(Keyboard.Key.NUM3))
                         m_timePanel.setSpeed(5.0f);
-                    break;                   
+                    break;  
+                case MOUSE_BUTTON_PRESSED:
+                case MOUSE_BUTTON_RELEASED:
+                    m_timePanel.clickedSomewhere(event.asMouseEvent());
+                    m_playPanel.clickedSomewhere(event.asMouseEvent());
+                    m_infoPanel.clickedSomewhere(event.asMouseEvent());
+                    break;
             }
         }
             

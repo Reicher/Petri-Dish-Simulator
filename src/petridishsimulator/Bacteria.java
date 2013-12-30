@@ -42,6 +42,7 @@ public class Bacteria {
         
         m_maxHealth = m_dNA.getFenotype(DNA.Fenotype.MAX_HEALTH);
         m_maxEnergy = m_dNA.getFenotype(DNA.Fenotype.ENERGY_STORAGE);
+        m_size = m_dNA.getFenotype(DNA.Fenotype.SIZE);
         
         m_energy = m_maxEnergy * 0.5f;
         m_health = m_maxHealth * 0.5f;
@@ -86,22 +87,21 @@ public class Bacteria {
             if(m_health > m_maxHealth)
                 m_health =m_maxHealth;
         }
-        m_energy -= 0.5 * dt; // it exhausting to live
+        m_energy -= 0.1 * dt; // it exhausting to live
         
         //System.out.println("H: " + m_health + " E: " + m_energy);
     }
-    
-            
+     
     public Nutrient Eat(float dt){
 
-        float bite = m_dNA.getFenotype(DNA.Fenotype.SIZE) / 20.0f * dt;
+        float bite = getSize() / 20.0f * dt;
         m_energy += bite;
         m_targetFood.eatOf(bite);
         return m_targetFood;
     }
     
     public Bacteria Split(float dt){
-        System.out.println("Splitting");
+        //System.out.println("Splitting");
         Bacteria tmp = new Bacteria(this); 
         tmp.setPosition(HelperStuff.getPosWithin(getPosition(), 
                                                  tmp.getSize() + getSize()));
@@ -119,13 +119,13 @@ public class Bacteria {
         if(m_targetFood == null)
             return;
         
-        m_energy -= getSize() / 20.0f * dt;
+        m_energy -= getSize() / 15.0f * dt;
         
         Vector2f distVec = Vector2f.sub(m_targetFood.getPosition(),
             getPosition());
         
         Vector2f moveVec = HelperStuff.makeUnit(distVec);
-        float speed = (40.0f / getSize()) * 20.0f;
+        float speed = (20.0f / getSize()) * 20.0f;
         m_shape.move(Vector2f.mul(moveVec, dt*speed));
     }
     
@@ -152,7 +152,7 @@ public class Bacteria {
         
         float dist2Food = HelperStuff.distance(
                 food.getPosition(), getPosition()) - 
-                food.getSize();
+                food.getSize() - getSize();
         
         if(dist2Food < 0)
             return true;
@@ -184,6 +184,7 @@ public class Bacteria {
      
     private float m_maxHealth;
     private float m_maxEnergy;
+    private float m_size;
     
     private float m_health;
     private float m_energy;

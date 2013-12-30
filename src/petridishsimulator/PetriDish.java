@@ -16,7 +16,7 @@ import java.util.*;
 public class PetriDish {
     public PetriDish(float size, Vector2f pos){
         float radius = size/2.0f;
-        float petriEdge = -5;
+        float petriEdge = 7;
         
         // Dish shape
         m_dishShape = new CircleShape(radius);

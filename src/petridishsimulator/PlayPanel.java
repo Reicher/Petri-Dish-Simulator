@@ -13,8 +13,8 @@ import org.jsfml.system.Vector2f;
  * @author regen
  */
 public class PlayPanel extends Panel {
-    public PlayPanel(Vector2f size, Vector2f position, Texture texture){
-        super(size, position, texture);
+    public PlayPanel(Vector2f size, Vector2f position){
+        super(size, position);
         
         m_petriDish= new PetriDish(400.0f, new Vector2f(50.0f, 50.0f));
     }
