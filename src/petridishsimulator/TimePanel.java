@@ -25,7 +25,7 @@ public class TimePanel extends Panel{
                       "Pause", false, true);
             
             m_timesOneButton = new SwitchButton( new Vector2f(200, 525), 
-                      "x1", false, true);
+                      "x1", true, true);
             
             m_timesTwoButton = new SwitchButton( new Vector2f(280, 525), 
                       "x2", false, true);

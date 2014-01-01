@@ -1,4 +1,4 @@
-/*
+ /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
@@ -101,8 +101,30 @@ public class PetriDish {
         }
         else
             m_foodClock += dt;
+    }
+    
+    public int getPopulationSize(){
+        return m_bacteria.size();
+    }
+    
+    public float getNutrientSize(){
+        float size = 0.0f;
+        for(Nutrient food : m_nutrient){
+            size += food.getValue();
+        }
         
+        return size;
+    }
+    
+    public int[] getFenotypeSpreed(DNA.Trait fenotype){
+        int[] spread = new int[10];
 
+        for(Bacteria bacTmp : m_bacteria){
+            float value = bacTmp.getTraitRelativeStrenght(fenotype);
+            spread[(int)(value*10.0f)]++;
+            
+        }
+        return spread;
     }
     
     private void removeDeadStuff(){

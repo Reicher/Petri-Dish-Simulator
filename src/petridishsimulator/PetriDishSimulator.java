@@ -29,7 +29,7 @@ public class PetriDishSimulator {
         Gui gui = new Gui(window);
 
         //Limit the framerate
-        window.setFramerateLimit(30);
+        //window.setFramerateLimit(30);
 
         //Main loop
         while(window.isOpen()) {

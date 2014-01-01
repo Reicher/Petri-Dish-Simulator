@@ -4,6 +4,7 @@
  */
 package petridishsimulator;
 
+import java.text.DecimalFormat;
 import org.jsfml.graphics.*;
 import org.jsfml.system.Vector2f;
 /**
@@ -24,55 +25,74 @@ public class Bacteria {
     }
     
     private void init(){
-        m_fillColor = new Color((int) m_dNA.getFenotype(DNA.Fenotype.RED), 
-                        (int)m_dNA.getFenotype(DNA.Fenotype.GREEN), 
-                        (int)m_dNA.getFenotype(DNA.Fenotype.BLUE), 
+        m_fillColor = new Color((int) m_dNA.getFenotype(DNA.Trait.RED), 
+                        (int)m_dNA.getFenotype(DNA.Trait.GREEN), 
+                        (int)m_dNA.getFenotype(DNA.Trait.BLUE), 
                         180);
               
         m_outlineColor = Color.BLACK;
         
-        m_shape = new CircleShape(m_dNA.getFenotype(DNA.Fenotype.SIZE));
+        m_shape = new CircleShape(m_dNA.getFenotype(DNA.Trait.SIZE));
         m_shape.setFillColor(m_fillColor);
         m_shape.setOutlineColor(m_outlineColor);
-        m_shape.setOutlineThickness(m_dNA.getFenotype(DNA.Fenotype.MEMBRANE));
+        m_shape.setOutlineThickness(m_dNA.getFenotype(DNA.Trait.MEMBRANE));
         
         m_shape.setOrigin(new Vector2f(
                 m_shape.getRadius()+m_shape.getOutlineThickness(),
                 m_shape.getRadius()+m_shape.getOutlineThickness()));
         
-        m_maxHealth = m_dNA.getFenotype(DNA.Fenotype.MAX_HEALTH);
-        m_maxEnergy = m_dNA.getFenotype(DNA.Fenotype.ENERGY_STORAGE);
-        m_size = m_dNA.getFenotype(DNA.Fenotype.SIZE);
+        m_maxHealth = m_dNA.getFenotype(DNA.Trait.MAX_HEALTH);
+        m_maxEnergy = 10.0f - m_dNA.getFenotype(DNA.Trait.METABOLISM) *10.0f;
+        m_speed = m_dNA.getFenotype(DNA.Trait.SPEED);
+        m_metabolism = m_dNA.getFenotype(DNA.Trait.METABOLISM);
+
         
-        m_energy = m_maxEnergy * 0.5f;
-        m_health = m_maxHealth * 0.5f;
+        m_energy = m_maxEnergy * 0.7f;
+        m_health = m_maxHealth * 0.7f;
+        m_foodInBelly = getSize() / 3.0f;
         stateOfDecay = 1.0f;
+
     }
     
     public void draw(RenderWindow window){
         window.draw(m_shape);
+        
+                //System.out.println(m_metabolism);
+        /*DecimalFormat df = new DecimalFormat();
+        df.setMaximumFractionDigits(1);
+        System.out.println("SPEED: " + df.format(m_speed) 
+                + " Energy: " + df.format(m_energy) 
+                + " Health: " + df.format(m_health));*/
+    }
+    
+    public void updateWants(){
+        // what to do?
+        if(m_fillColor.a <= 0)// Decayed
+            m_activity =  Activity.DECAYED;
+        else if(m_health <= 0)// Dead      
+            m_activity =  Activity.DEAD;
+        else if(m_energy >= m_maxEnergy * 0.9f // SPLIT
+            && m_health >= m_maxHealth * 0.9f)
+            m_activity =  Activity.SPLIT;        
+        else if(foodInReach(m_targetFood)) // Food is in reach, EAT
+            m_activity =  Activity.EAT;
+        else // MOVE TO FOOD
+            m_activity = Activity.MOVE_TO_FOOD;
     }
     
     public void update(float dt, Nutrient closestFood){
         m_targetFood = closestFood;
         
-        // what to do?
-        // DIE
-        if(m_fillColor.a <= 0)
-            m_activity =  Activity.DECAYED;
-        if(m_health <= 0)      
-            m_activity =  Activity.DEAD;
-        // SPLIT
-        else if(m_energy >= m_maxEnergy * 0.9f
-            && m_health >= m_maxHealth * 0.9f)
-            m_activity =  Activity.SPLIT;
-        // EAT
-        else if(foodInReach(closestFood))
-            m_activity =  Activity.EAT;
-        // MOVE TO FOOD
-        else
-            m_activity = Activity.MOVE_TO_FOOD;
-
+        updateWants();
+        
+        // food. hold withing limits
+        if(m_foodInBelly > getSize() / 2.0f)
+            m_foodInBelly = getSize() / 2.0f;        
+        if (m_foodInBelly > 0.0f){
+            m_energy +=  m_metabolism * dt;
+            m_foodInBelly -= 0.5 * m_metabolism * dt;
+        }
+        
         // Energy, hold within limits and starve when 0
         if(m_energy <= 0){
             m_health -= 1 * dt;
@@ -82,20 +102,20 @@ public class Bacteria {
         
         // Health, hold within limits and die when 0, regenerate otherwise
         if(m_energy > 0 && m_health <m_maxHealth){
-            m_health += 0.4 * dt;
-            m_energy -= 0.2 * dt;
+            m_health +=  m_metabolism * dt;
+            m_energy -= m_metabolism * dt;
             if(m_health > m_maxHealth)
                 m_health =m_maxHealth;
         }
-        m_energy -= 0.1 * dt; // it exhausting to live
+        m_energy -= m_metabolism * getMass()* 0.5 * dt; // it exhausting to live
         
         //System.out.println("H: " + m_health + " E: " + m_energy);
     }
      
     public Nutrient Eat(float dt){
 
-        float bite = getSize() / 20.0f * dt;
-        m_energy += bite;
+        float bite = getSize() * 0.1f * dt;
+        m_foodInBelly += bite;
         m_targetFood.eatOf(bite);
         return m_targetFood;
     }
@@ -118,15 +138,15 @@ public class Bacteria {
     {
         if(m_targetFood == null)
             return;
-        
-        m_energy -= getSize() / 15.0f * dt;
+        float energyLoss = 0.5f *  getMass() * (float)Math.pow(m_speed*0.5f, 2) * dt;
+        //System.out.println(energyLoss);
+        m_energy -=energyLoss *0.1;
         
         Vector2f distVec = Vector2f.sub(m_targetFood.getPosition(),
             getPosition());
         
         Vector2f moveVec = HelperStuff.makeUnit(distVec);
-        float speed = (20.0f / getSize()) * 20.0f;
-        m_shape.move(Vector2f.mul(moveVec, dt*speed));
+        m_shape.move(Vector2f.mul(moveVec, dt*m_speed));
     }
     
     public void decay(float dt){
@@ -144,7 +164,6 @@ public class Bacteria {
         m_shape.setOutlineColor(m_outlineColor);
     }
     
-        
     private boolean foodInReach(Nutrient food)
     {
         if(food == null)
@@ -168,8 +187,16 @@ public class Bacteria {
         return m_shape.getPosition();
     }
     
+    public float getTraitRelativeStrenght(DNA.Trait feno){
+        return m_dNA.getRelativeStrength(feno);
+    }
+    
     public float getSize(){
         return m_shape.getRadius() + m_shape.getOutlineThickness();
+    }
+    
+    public float getMass(){
+        return m_shape.getRadius() * 0.05f + m_shape.getOutlineThickness() * 0.1f;
     }
     
     private DNA getDna(){
@@ -184,7 +211,9 @@ public class Bacteria {
      
     private float m_maxHealth;
     private float m_maxEnergy;
-    private float m_size;
+    private float m_speed;
+    private float m_metabolism;
+    private float m_foodInBelly;
     
     private float m_health;
     private float m_energy;

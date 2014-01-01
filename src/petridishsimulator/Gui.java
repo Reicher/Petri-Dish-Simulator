@@ -51,14 +51,9 @@ public class Gui {
                 case KEY_PRESSED:
                     if(event.asKeyEvent().key.equals(Keyboard.Key.ESCAPE))
                         m_window.close();
-                    else if(  event.asKeyEvent().key.equals(Keyboard.Key.NUM1))
-                        m_timePanel.setSpeed(1.0f);
-                    else if(  event.asKeyEvent().key.equals(Keyboard.Key.NUM2))
-                        m_timePanel.setSpeed(2.0f);
-                    else if(  event.asKeyEvent().key.equals(Keyboard.Key.NUM3))
-                        m_timePanel.setSpeed(5.0f);
+                    else if(  event.asKeyEvent().key.equals(Keyboard.Key.F))
+                        m_playPanel.toggleFps();;
                     break;  
-                case MOUSE_BUTTON_PRESSED:
                 case MOUSE_BUTTON_RELEASED:
                     m_timePanel.clickedSomewhere(event.asMouseEvent());
                     m_playPanel.clickedSomewhere(event.asMouseEvent());
@@ -70,6 +65,10 @@ public class Gui {
         m_timePanel.update(); // update time
         
         m_playPanel.update(m_timePanel.getDt());
+        
+        m_infoPanel.setPopulationSize(m_playPanel.getBacteriaPopulation());
+        m_infoPanel.setNutrientSize(m_playPanel.getNutrientSize());
+        m_infoPanel.setTraitSpread( m_playPanel.getFenotypeSpread(m_infoPanel.getCurrentTrait()));
         m_infoPanel.update(m_timePanel.getDt());
         
         

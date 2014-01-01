@@ -6,9 +6,11 @@ package petridishsimulator;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DecimalFormat;
 import org.jsfml.graphics.*;
 
 import org.jsfml.system.Vector2f;
+import org.jsfml.window.event.MouseEvent;
 /**
  *
  * @author regen
@@ -31,15 +33,60 @@ public class InfoPanel extends Panel {
             m_headerText.setColor(Color.BLACK);
             m_headerText.setPosition(Vector2f.add(m_position, new Vector2f(45, 10)));
             m_headerText.setStyle(Text.UNDERLINED);
-
+            
+            m_populationSizeText= new Text("Population: ", m_headerFont, 30);
+            m_populationSizeText.setColor(Color.BLACK);
+            m_populationSizeText.setPosition(Vector2f.add(m_position, new Vector2f(20, 120)));
+            
+            m_nutrientSizeText = new Text("Nutrients: ", m_headerFont, 30);
+            m_nutrientSizeText.setColor(Color.BLACK);
+            m_nutrientSizeText.setPosition(Vector2f.add(m_position, new Vector2f(20, 160)));
+            
+            m_traitViewer = new TraitViewer(Vector2f.add(m_position, new Vector2f(20, 220)));
         }
         
         public void draw(RenderWindow window){
             super.draw(window);
             
             window.draw(m_headerText);
+            window.draw(m_populationSizeText);
+            window.draw(m_nutrientSizeText);
+            m_traitViewer.draw(window);
+        }
+
+        public void setPopulationSize(int size){
+            m_population = size;
+            m_populationSizeText.setString("Population: " + m_population);
+        }
+        
+        public void setNutrientSize(float size){
+            DecimalFormat df = new DecimalFormat();
+            df.setMaximumFractionDigits(1);
+            m_nutrientSizeText.setString("Nutrients: " + df.format(size));
+        }
+        
+        public void setTraitSpread(int[] spread){
+            float[] values = new float[10];
+            for(int i = 0; i < 10; i++)
+                values[i] += (float)spread[i]/(float)m_population;
+            
+            m_traitViewer.update(values);
+        }
+        
+        public DNA.Trait getCurrentTrait(){
+            return m_traitViewer.getTrait();
+        }
+        
+        public void clickedSomewhere(MouseEvent mouseEvent){
+            m_traitViewer.clickedSomewhere(mouseEvent);
         }
         
     private Text m_headerText;
+    private Text m_populationSizeText;
+    private Text m_nutrientSizeText;
     private Font m_headerFont;
+    private int m_population;
+    
+    private TraitViewer m_traitViewer; 
+    
 }
