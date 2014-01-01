@@ -21,18 +21,17 @@ public class PetriDish {
         // Dish shape
         m_dishShape = new CircleShape(radius);
         m_dishShape.setFillColor(new Color(230, 230, 230, 150));
-        m_dishShape.setOutlineColor(new Color(200, 200, 200, 200));
+        m_dishShape.setOutlineColor(new Color(180, 180, 180, 200));
         m_dishShape.setOutlineThickness(petriEdge);
         m_dishShape.setPosition(pos.x, pos.y);
         m_centre = new Vector2f(pos.x + radius, pos.y + radius);
-
         
         m_bacteria = new ArrayList<Bacteria>();
-        for(int i = 0; i < 10; i = i +1)
+        for(int i = 0; i < 20; i = i +1)
             createRandomBacteria();
         
         m_nutrient = new ArrayList<Nutrient>();  
-        for(int i = 0; i < 20; i = i +1)
+        for(int i = 0; i < 40; i = i +1)
             createRandomNutrient();
         
         m_foodClock = 0.0f;
@@ -68,6 +67,7 @@ public class PetriDish {
     public void update(float dt)
     {
         List<Bacteria> newGuys = new ArrayList<Bacteria>();
+        Bacteria newTmp;
         
         for(Bacteria bacTmp : m_bacteria){
             bacTmp.update(dt, getClosestNutrient(bacTmp.getPosition()));
@@ -79,8 +79,11 @@ public class PetriDish {
                     if(food.getId() == tmp.getId())
                         m_nutrient.set(m_nutrient.indexOf(food), tmp);
             }
-            else if(bacTmp.getActivity() == Bacteria.Activity.SPLIT)
-                newGuys.add(bacTmp.Split(dt));
+            else if(bacTmp.getActivity() == Bacteria.Activity.SPLIT){
+                newTmp = bacTmp.Split(dt);
+                newTmp.setPosition(adjustPositionToDisc(newTmp.getPosition(), newTmp.getSize()));
+                newGuys.add(newTmp);
+            }
             else if(bacTmp.getActivity() == Bacteria.Activity.DEAD)
                bacTmp.decay(dt);
             else if(bacTmp.getActivity() == Bacteria.Activity.MOVE_TO_FOOD)
@@ -97,7 +100,7 @@ public class PetriDish {
         if(m_nextNutrient <= m_foodClock){
             createRandomNutrient();
             m_foodClock = 0.0f;
-            m_nextNutrient = (float)Math.random() * 1.0f;
+            m_nextNutrient = (float)Math.random() * 0.5f;
         }
         else
             m_foodClock += dt;
@@ -153,8 +156,17 @@ public class PetriDish {
         return Vector2f.add( m_centre, HelperStuff.polar2Vec2(r, t));
     }
     
+    private Vector2f adjustPositionToDisc(Vector2f pos, float size){
+        if (m_dishShape.getRadius() > (HelperStuff.distance(m_centre, pos) + size))
+            return pos;
+        
+        Vector2f inVec = HelperStuff.makeUnit(Vector2f.sub(pos, m_centre));
+        pos = Vector2f.add(m_centre, Vector2f.mul(inVec, m_dishShape.getRadius() - size));
+        return pos;
+    }
+    
     private void createRandomNutrient(){
-        float size = 3.0f + (float)Math.random() * 20.0f;
+        float size = 3.0f + (float)Math.random() * 10.0f;
         Nutrient tmp = new Nutrient( getRandomPositionWithinDish(size),
                                      size);
         m_nutrient.add(tmp);

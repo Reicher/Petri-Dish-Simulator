@@ -42,7 +42,15 @@ public class InfoPanel extends Panel {
             m_nutrientSizeText.setColor(Color.BLACK);
             m_nutrientSizeText.setPosition(Vector2f.add(m_position, new Vector2f(20, 160)));
             
-            m_traitViewer = new TraitViewer(Vector2f.add(m_position, new Vector2f(20, 220)));
+            m_generations = new Text("Generations: ", m_headerFont, 30);
+            m_generations.setColor(Color.BLACK);
+            m_generations.setPosition(Vector2f.add(m_position, new Vector2f(20, 200)));
+            
+            m_oldestGenerationAlive = new Text("Oldest alive: ", m_headerFont, 30);
+            m_oldestGenerationAlive.setColor(Color.BLACK);
+            m_oldestGenerationAlive.setPosition(Vector2f.add(m_position, new Vector2f(20, 240)));
+            
+            m_traitViewer = new TraitViewer(Vector2f.add(m_position, new Vector2f(20, 320)));
         }
         
         public void draw(RenderWindow window){
@@ -51,6 +59,8 @@ public class InfoPanel extends Panel {
             window.draw(m_headerText);
             window.draw(m_populationSizeText);
             window.draw(m_nutrientSizeText);
+            window.draw(m_generations);
+            window.draw(m_oldestGenerationAlive);
             m_traitViewer.draw(window);
         }
 
@@ -86,6 +96,9 @@ public class InfoPanel extends Panel {
     private Text m_nutrientSizeText;
     private Font m_headerFont;
     private int m_population;
+    
+    private Text m_generations;
+    private Text m_oldestGenerationAlive;
     
     private TraitViewer m_traitViewer; 
     

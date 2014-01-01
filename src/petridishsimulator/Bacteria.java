@@ -101,7 +101,7 @@ public class Bacteria {
             m_energy = m_maxEnergy;
         
         // Health, hold within limits and die when 0, regenerate otherwise
-        if(m_energy > 0 && m_health <m_maxHealth){
+        if(m_energy > 0 && m_health <m_maxHealth && m_activity != Activity.DEAD){
             m_health +=  m_metabolism * dt;
             m_energy -= m_metabolism * dt;
             if(m_health > m_maxHealth)
@@ -122,11 +122,10 @@ public class Bacteria {
     
     public Bacteria Split(float dt){
         //System.out.println("Splitting");
-        Bacteria tmp = new Bacteria(this); 
-        tmp.setPosition(HelperStuff.getPosWithin(getPosition(), 
-                                                 tmp.getSize() + getSize()));
+        Bacteria tmp = new Bacteria(this);
+
         tmp.setPosition( HelperStuff.getPosWithin(getPosition(), 
-                getSize() + tmp.getSize()));
+                         getSize() + tmp.getSize()));
         
         m_energy = m_maxEnergy * 0.5f;
         m_health = m_maxHealth * 0.5f;
@@ -138,7 +137,7 @@ public class Bacteria {
     {
         if(m_targetFood == null)
             return;
-        float energyLoss = 0.5f *  getMass() * (float)Math.pow(m_speed*0.5f, 2) * dt;
+        float energyLoss = 0.5f *  getMass() * (float)Math.pow(m_speed, 2) * dt;
         //System.out.println(energyLoss);
         m_energy -=energyLoss *0.1;
         

@@ -48,13 +48,13 @@ public class TraitViewer {
 
         m_background = new RectangleShape(new Vector2f(250.0f, 150.0f));
         m_background.setPosition(pos);
-        m_background.setFillColor(new Color(255, 255, 255, 200));
+        m_background.setFillColor(new Color(255, 255, 255, 150));
         m_background.setOutlineColor(Color.BLACK);
         m_background.setOutlineThickness(2);
         
         m_headerBackground = new RectangleShape(new Vector2f(230.0f, 40.0f));
         m_headerBackground.setPosition(Vector2f.add(pos, new Vector2f(10.0f, 10.0f)));
-        m_headerBackground.setFillColor(new Color(255, 255, 255, 100));
+        m_headerBackground.setFillColor(new Color(255, 255, 255, 150));
         m_headerBackground.setOutlineThickness(2);
         m_headerBackground.setOutlineColor(Color.BLACK);
         
@@ -106,10 +106,10 @@ public class TraitViewer {
         
         RectangleShape bar;
         for(int i = 0; i < 10; i++){
-            bar = new RectangleShape(new Vector2f(15, -100.0f * m_values[i]));
+            bar = new RectangleShape(new Vector2f(15, -90.0f * m_values[i]));
             bar.setFillColor(Color.RED);
             bar.setPosition( Vector2f.add(m_background.getPosition()
-                                            , new Vector2f(5.0f + 22.0f * i, 145)));
+                                            , new Vector2f(5.0f + 24.0f * i, 145)));
             window.draw(bar);
         }
     }

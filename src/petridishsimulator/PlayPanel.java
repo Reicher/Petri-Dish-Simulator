@@ -86,7 +86,7 @@ public class PlayPanel extends Panel{
         return m_petriDish.getNutrientSize();
     }
     
-    public int[] getFenotypeSpread(DNA.Trait feno){
+    public int[] getTraitSpread(DNA.Trait feno){
         return m_petriDish.getFenotypeSpreed(feno);
     }
             

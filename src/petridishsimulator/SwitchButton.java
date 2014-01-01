@@ -64,6 +64,12 @@ public class SwitchButton {
         setLook();
     }
     
+    public void setPushed(){
+        m_isPushed = true;
+        
+        setLook();
+    }
+    
     public void draw(RenderWindow window){
         window.draw(m_shape);
         window.draw(m_buttonText);
@@ -85,13 +91,13 @@ public class SwitchButton {
     
     private void setLook(){
         if(m_isPushed){
-            m_shape.setFillColor(new Color(100, 100, 100, 255));
-            m_shape.setOutlineThickness(-6);
-            m_shape.setOutlineColor(new Color(0, 0, 0, 255));
+            m_shape.setFillColor(new Color(140, 140, 140, 255));
+            m_shape.setOutlineThickness(-5);
+            m_shape.setOutlineColor(new Color(200, 100, 100, 100));
         }else{
             m_shape.setFillColor(new Color(200, 200, 200, 255));
-            m_shape.setOutlineThickness(-4);
-            m_shape.setOutlineColor(new Color(0, 0, 0, 255));
+            m_shape.setOutlineThickness(-5);
+            m_shape.setOutlineColor(new Color(200, 100, 100, 150));
         }        
     }
     

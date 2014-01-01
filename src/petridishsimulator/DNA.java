@@ -91,8 +91,8 @@ public class DNA {
         for(Trait fenotype : Trait.values()){ 
             switch(fenotype){
                 case SIZE:
-                    m_minLimit[fenotype.ordinal()] = 5.0f;
-                    m_maxLimit[fenotype.ordinal()] = 20.0f;
+                    m_minLimit[fenotype.ordinal()] = 1.0f;
+                    m_maxLimit[fenotype.ordinal()] = 10.0f;
                     break;
                 case MEMBRANE:
                     m_minLimit[fenotype.ordinal()] = 1.0f;
