@@ -34,23 +34,23 @@ public class InfoPanel extends Panel {
             m_headerText.setPosition(Vector2f.add(m_position, new Vector2f(45, 10)));
             m_headerText.setStyle(Text.UNDERLINED);
             
-            m_populationSizeText= new Text("Population: ", m_headerFont, 30);
+            m_populationSizeText= new Text("Population: ", m_headerFont, 27);
             m_populationSizeText.setColor(Color.BLACK);
-            m_populationSizeText.setPosition(Vector2f.add(m_position, new Vector2f(20, 120)));
+            m_populationSizeText.setPosition(Vector2f.add(m_position, new Vector2f(20, 140)));
             
-            m_nutrientSizeText = new Text("Nutrients: ", m_headerFont, 30);
+            m_nutrientSizeText = new Text("Nutrients: ", m_headerFont, 27);
             m_nutrientSizeText.setColor(Color.BLACK);
-            m_nutrientSizeText.setPosition(Vector2f.add(m_position, new Vector2f(20, 160)));
+            m_nutrientSizeText.setPosition(Vector2f.add(m_position, new Vector2f(20, 180)));
             
-            m_generations = new Text("Generations: ", m_headerFont, 30);
+            m_generations = new Text("Generations: ", m_headerFont, 27);
             m_generations.setColor(Color.BLACK);
-            m_generations.setPosition(Vector2f.add(m_position, new Vector2f(20, 200)));
+            m_generations.setPosition(Vector2f.add(m_position, new Vector2f(20, 220)));
             
-            m_oldestGenerationAlive = new Text("Oldest alive: ", m_headerFont, 30);
+            m_oldestGenerationAlive = new Text("Oldest alive: ", m_headerFont, 27);
             m_oldestGenerationAlive.setColor(Color.BLACK);
-            m_oldestGenerationAlive.setPosition(Vector2f.add(m_position, new Vector2f(20, 240)));
+            m_oldestGenerationAlive.setPosition(Vector2f.add(m_position, new Vector2f(20, 260)));
             
-            m_traitViewer = new TraitViewer(Vector2f.add(m_position, new Vector2f(20, 320)));
+            m_traitViewer = new TraitViewer(Vector2f.add(m_position, new Vector2f(25, 320)));
         }
         
         public void draw(RenderWindow window){
@@ -81,6 +81,14 @@ public class InfoPanel extends Panel {
                 values[i] += (float)spread[i]/(float)m_population;
             
             m_traitViewer.update(values);
+        }
+        
+        public void setGenerations(int generations){
+            m_generations.setString("Generations: " + generations);
+        }
+        
+        public void setOldestGeneration(int generation){
+            m_oldestGenerationAlive.setString("Oldest alive: Gen " + generation);
         }
         
         public DNA.Trait getCurrentTrait(){

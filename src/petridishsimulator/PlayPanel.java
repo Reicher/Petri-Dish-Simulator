@@ -83,11 +83,20 @@ public class PlayPanel extends Panel{
     }
     
     public float getNutrientSize(){
-        return m_petriDish.getNutrientSize();
+        return m_petriDish.m_nutrientHolder.getNutrientSize();
     }
     
     public int[] getTraitSpread(DNA.Trait feno){
         return m_petriDish.m_population.getFenotypeSpreed(feno);
+    }
+    
+    public int getGenerations(){
+        
+        return m_petriDish.m_population.getMostGenerations();
+    }
+            
+    public int getOldestGeneration(){
+        return m_petriDish.m_population.getOldestGeneration();
     }
             
     private PetriDish m_petriDish;

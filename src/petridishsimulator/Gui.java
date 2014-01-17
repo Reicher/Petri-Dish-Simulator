@@ -72,6 +72,8 @@ public class Gui {
         m_infoPanel.setPopulationSize(m_playPanel.getBacteriaPopulation());
         m_infoPanel.setNutrientSize(m_playPanel.getNutrientSize());
         m_infoPanel.setTraitSpread( m_playPanel.getTraitSpread(m_infoPanel.getCurrentTrait()));
+        m_infoPanel.setGenerations( m_playPanel.getGenerations());
+        m_infoPanel.setOldestGeneration(m_playPanel.getOldestGeneration());
         m_infoPanel.update(m_timePanel.getDt());
         
         

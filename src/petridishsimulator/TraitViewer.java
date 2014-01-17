@@ -38,7 +38,7 @@ public class TraitViewer {
         String trait = m_currentTrait.toString();
         trait.replace("_", " ");
         trait = trait.toLowerCase();
-        trait = trait.substring(0, 1).toUpperCase() + trait.substring(1);
+        trait = trait.substring(0, 1).toUpperCase() + trait.substring(1);       
             
         m_traitText = new Text(trait, m_font, 28);
         m_traitText.setColor(Color.BLACK);
@@ -100,6 +100,7 @@ public class TraitViewer {
     public void draw(RenderWindow window){
         window.draw(m_background);
         window.draw(m_headerBackground);
+
         window.draw(m_traitText);
         window.draw(m_nextTriangle);
         window.draw(m_prevTriangle);

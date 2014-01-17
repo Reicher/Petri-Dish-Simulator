@@ -16,33 +16,30 @@ import org.jsfml.system.Vector2f;
  */
 public class Population {
     public Population(int size, PetriDish dish){
-        
+        m_dish = dish;
         m_bacteria = new ArrayList<Bacteria>();
         
-        for(int i = 0; i < 10; i = i +1){
+        for(int i = 0; i < size; i = i +1){
             Bacteria tmp = new Bacteria();            
             tmp.setPosition(dish.getRandomPositionWithinDish(tmp.getSize()));
             m_bacteria.add(tmp);
         }
     }
     
-    public void update(float dt, PetriDish dish){
+    public void update(float dt, NutrientHolder allTheFood){
         List<Bacteria> newGuys = new ArrayList<Bacteria>();
         Bacteria newTmp;
         
         for(Bacteria bacTmp : m_bacteria){
-            bacTmp.update(dt, getClosestNutrient(bacTmp.getPosition(), dish.m_nutrient));
+            bacTmp.update(dt, allTheFood.getClosestNutrient(bacTmp.getPosition()));
 
             if(bacTmp.getActivity() == Bacteria.Activity.EAT){
                 Nutrient tmp = bacTmp.Eat(dt);
-                // So dumb, fucking java
-                for(Nutrient food : dish.m_nutrient)
-                    if(food.getId() == tmp.getId())
-                        dish.m_nutrient.set(dish.m_nutrient.indexOf(food), tmp);
+                allTheFood.updateNutrientWith(tmp);
             }
             else if(bacTmp.getActivity() == Bacteria.Activity.SPLIT){
                 newTmp = bacTmp.Split(dt);
-                newTmp.setPosition(dish.adjustPositionToDisc(newTmp.getPosition(), newTmp.getSize()));
+                newTmp.setPosition(m_dish.adjustPositionToDisc(newTmp.getPosition(), newTmp.getSize()));
                 newGuys.add(newTmp);
             }
             else if(bacTmp.getActivity() == Bacteria.Activity.DEAD)
@@ -76,22 +73,27 @@ public class Population {
         return spread;
     }
         
-    private Nutrient getClosestNutrient(Vector2f pos, List<Nutrient> nutrients ){
-        float closestDist = Float.MAX_VALUE;
-        float dist;
-        Nutrient closest = null;
-        for(Nutrient food : nutrients){
-            dist = HelperStuff.distance(pos, food.getPosition()) - food.getSize();
-            if(dist < closestDist){
-                closest = food;
-                closestDist = dist;
-            }
-        }
-        return closest;
-    }
-        
     public int getPopulationSize(){
         return m_bacteria.size();
+    }
+    
+    public int getMostGenerations(){
+        int mostGenerations = 0;
+        for(Bacteria tmp : m_bacteria)
+            if(tmp.getGeneration() > mostGenerations)
+                mostGenerations = tmp.getGeneration();
+        return mostGenerations;
+    }
+    
+    public int getOldestGeneration(){
+        if(m_bacteria.isEmpty())
+            return 0;
+        
+        int youngestGeneration = Integer.MAX_VALUE;
+        for(Bacteria tmp : m_bacteria)
+            if(tmp.getGeneration() < youngestGeneration)
+                youngestGeneration = tmp.getGeneration();
+        return youngestGeneration;
     }
     
     public void draw(RenderWindow window){
@@ -100,4 +102,5 @@ public class Population {
     }
     
     private List<Bacteria> m_bacteria;
+    private PetriDish m_dish;
 }

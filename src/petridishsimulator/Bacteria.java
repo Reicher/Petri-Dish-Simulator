@@ -22,7 +22,7 @@ public class Bacteria {
     public Bacteria(Bacteria copy)
     {
         m_dNA = new DNA(copy.getDna());
-        m_generation = copy.getGeneration();
+        m_generation = copy.getGeneration()+1;
         init();
     }
     
@@ -51,7 +51,7 @@ public class Bacteria {
         
         m_energy = m_maxEnergy * 0.7f;
         m_health = m_maxHealth * 0.7f;
-        m_foodInBelly = getSize() / 3.0f;
+        m_foodInBelly = getSize() / 2.0f;
         stateOfDecay = 1.0f;
 
     }
@@ -59,7 +59,7 @@ public class Bacteria {
     public void draw(RenderWindow window){
         window.draw(m_shape);
         
-                //System.out.println(m_metabolism);
+        //System.out.println(m_metabolism);
         /*DecimalFormat df = new DecimalFormat();
         df.setMaximumFractionDigits(1);
         System.out.println("SPEED: " + df.format(m_speed) 
@@ -92,7 +92,7 @@ public class Bacteria {
             m_foodInBelly = getSize() / 2.0f;        
         if (m_foodInBelly > 0.0f){
             m_energy +=  m_metabolism * dt;
-            m_foodInBelly -= 0.5 * m_metabolism * dt;
+            m_foodInBelly -= m_metabolism * dt;
         }
         
         // Energy, hold within limits and starve when 0
@@ -109,7 +109,7 @@ public class Bacteria {
             if(m_health > m_maxHealth)
                 m_health =m_maxHealth;
         }
-        m_energy -= m_metabolism * getMass()* 0.5 * dt; // it exhausting to live
+        m_energy -= m_metabolism * getMass()* dt; // it exhausting to live
         
         //System.out.println("H: " + m_health + " E: " + m_energy);
     }
@@ -139,7 +139,7 @@ public class Bacteria {
     {
         if(m_targetFood == null)
             return;
-        float energyLoss = 0.5f *  getMass() * (float)Math.pow(m_speed, 2) * dt;
+        float energyLoss = 0.7f *  getMass() * (float)Math.pow(m_speed, 2) * dt;
         //System.out.println(energyLoss);
         m_energy -=energyLoss *0.1;
         
@@ -197,7 +197,7 @@ public class Bacteria {
     }
     
     public float getMass(){
-        return m_shape.getRadius() * 0.05f + m_shape.getOutlineThickness() * 0.1f;
+        return m_shape.getRadius() * 0.01f + m_shape.getOutlineThickness() * 0.1f;
     }
     
     private DNA getDna(){

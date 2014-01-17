@@ -27,61 +27,20 @@ public class PetriDish {
         m_centre = new Vector2f(pos.x + radius, pos.y + radius);
         
         m_population = new Population(10, this);
-        
-        m_nutrient = new ArrayList<Nutrient>();  
-        for(int i = 0; i < 40; i = i +1)
-            createRandomNutrient();
-        
-        m_foodClock = 0.0f;
-        m_nextNutrient = 0.0f;
+        m_nutrientHolder = new NutrientHolder(20, this);
     }
     
     public void draw(RenderWindow window){
         window.draw(m_dishShape);
         
-        for(Nutrient food : m_nutrient){
-            food.draw(window);
-        }
-
+        m_nutrientHolder.draw(window);
         m_population.draw(window);
     }
     
     public void update(float dt)
     {
-        m_population.update(dt, this);
-        
-        removeEatenFood();
-        
-        for(Nutrient food : m_nutrient)
-            food.update(dt);
-        
-        //new food!
-        if(m_nextNutrient <= m_foodClock){
-            createRandomNutrient();
-            m_foodClock = 0.0f;
-            m_nextNutrient = (float)Math.random() * 0.5f;
-        }
-        else
-            m_foodClock += dt;
-    }
-    
-    public float getNutrientSize(){
-        float size = 0.0f;
-        for(Nutrient food : m_nutrient){
-            size += food.getValue();
-        }
-        
-        return size;
-    }
-
-    private void removeEatenFood(){
-        //Food
-        Iterator<Nutrient> foodIt = m_nutrient.iterator();
-        while (foodIt.hasNext()) {
-            Nutrient foodTmp = foodIt.next();
-            if(foodTmp.isEaten())
-                foodIt.remove();
-        }
+        m_population.update(dt, m_nutrientHolder);
+        m_nutrientHolder.update(dt);
     }
     
     public Vector2f getRandomPositionWithinDish(float size){
@@ -99,23 +58,10 @@ public class PetriDish {
         pos = Vector2f.add(m_centre, Vector2f.mul(inVec, m_dishShape.getRadius() - size));
         return pos;
     }
-    
-    private void createRandomNutrient(){
-        float size = 3.0f + (float)Math.random() * 10.0f;
-        Nutrient tmp = new Nutrient( getRandomPositionWithinDish(size),
-                                     size);
-        m_nutrient.add(tmp);
-    }
        
     private CircleShape m_dishShape;
     Vector2f m_centre; 
     
     public Population m_population;
-    private List<Bacteria> m_bacteria;
-    
-    public List<Nutrient> m_nutrient;
-    
-    private float m_nextNutrient;
-    private float m_foodClock;
-    
+    public NutrientHolder m_nutrientHolder;
 }
