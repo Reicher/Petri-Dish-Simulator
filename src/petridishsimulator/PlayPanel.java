@@ -79,7 +79,7 @@ public class PlayPanel extends Panel{
     }
     
     public int getBacteriaPopulation(){
-        return m_petriDish.getPopulationSize();
+        return m_petriDish.m_population.getPopulationSize();
     }
     
     public float getNutrientSize(){
@@ -87,7 +87,7 @@ public class PlayPanel extends Panel{
     }
     
     public int[] getTraitSpread(DNA.Trait feno){
-        return m_petriDish.getFenotypeSpreed(feno);
+        return m_petriDish.m_population.getFenotypeSpreed(feno);
     }
             
     private PetriDish m_petriDish;

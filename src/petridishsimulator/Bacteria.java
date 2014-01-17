@@ -15,12 +15,14 @@ import org.jsfml.system.Vector2f;
 public class Bacteria {
     public Bacteria(){
         m_dNA = new DNA();
+        m_generation = 0;
         init();
     }
     
     public Bacteria(Bacteria copy)
     {
         m_dNA = new DNA(copy.getDna());
+        m_generation = copy.getGeneration();
         init();
     }
     
@@ -206,6 +208,10 @@ public class Bacteria {
         return m_activity;
     }
     
+    public int getGeneration(){
+        return m_generation;
+    }
+    
     private CircleShape m_shape;
      
     private float m_maxHealth;
@@ -224,6 +230,8 @@ public class Bacteria {
     private Nutrient m_targetFood;
    
     private DNA m_dNA;
+    
+    private int m_generation;
     
     public enum Activity {
     MOVE_TO_FOOD, EAT, SPLIT, DEAD, DECAYED
