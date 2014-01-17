@@ -69,7 +69,7 @@ public class NutrientHolder {
                 closestDist = dist;
             }
         }
-        if(Math.random() > 0.75f)
+        if(Math.random() < 0.75f)
             return closest;
         else
             return SeccondClosest;
