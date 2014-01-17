@@ -91,8 +91,8 @@ public class DNA {
         for(Trait fenotype : Trait.values()){ 
             switch(fenotype){
                 case SIZE:
-                    m_minLimit[fenotype.ordinal()] = 1.0f;
-                    m_maxLimit[fenotype.ordinal()] = 10.0f;
+                    m_minLimit[fenotype.ordinal()] = 4.0f;
+                    m_maxLimit[fenotype.ordinal()] = 13.0f;
                     break;
                 case MEMBRANE:
                     m_minLimit[fenotype.ordinal()] = 1.0f;
@@ -112,24 +112,24 @@ public class DNA {
                 break;
                 case MUTATION_CHANCE:
                     m_minLimit[fenotype.ordinal()] = 0.1f;
-                    m_maxLimit[fenotype.ordinal()] = 0.7f;
+                    m_maxLimit[fenotype.ordinal()] = 0.9f;
                     break;
                 case METABOLISM:
                     m_minLimit[fenotype.ordinal()] = 0.1f;
-                    m_maxLimit[fenotype.ordinal()] = 0.7f;
+                    m_maxLimit[fenotype.ordinal()] = 1.0f;
                     break;
                 case MUTATION_POWER:
                     m_minLimit[fenotype.ordinal()] = 0.1f;
-                    m_maxLimit[fenotype.ordinal()] = 0.7f;
+                    m_maxLimit[fenotype.ordinal()] = 0.9f;
                     break;
                 // END OF RANDOM FENOTYPES
                 case MAX_HEALTH:
                     m_minLimit[fenotype.ordinal()] = 1.0f;
-                    m_maxLimit[fenotype.ordinal()] = 10.0f;
+                    m_maxLimit[fenotype.ordinal()] = 5.0f;
                     break;
                 case SPEED:
-                    m_minLimit[fenotype.ordinal()] = 10.0f;
-                    m_maxLimit[fenotype.ordinal()] = 40.0f;
+                    m_minLimit[fenotype.ordinal()] = 1.0f;
+                    m_maxLimit[fenotype.ordinal()] = 10.0f;
                     break;                    
                     
             }

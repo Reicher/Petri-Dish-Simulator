@@ -48,10 +48,9 @@ public class Bacteria {
         m_speed = m_dNA.getFenotype(DNA.Trait.SPEED);
         m_metabolism = m_dNA.getFenotype(DNA.Trait.METABOLISM);
 
-        
         m_energy = m_maxEnergy * 0.7f;
         m_health = m_maxHealth * 0.7f;
-        m_foodInBelly = getSize() / 2.0f;
+        m_foodInBelly = 0f;
         stateOfDecay = 1.0f;
 
     }
@@ -82,14 +81,15 @@ public class Bacteria {
             m_activity = Activity.MOVE_TO_FOOD;
     }
     
-    public void update(float dt, Nutrient closestFood){
-        m_targetFood = closestFood;
+    public void update(float dt, NutrientHolder allFood){
+        if(m_targetFood != null)
+            m_targetFood = allFood.getNutrient(m_targetFood.getId());
         
         updateWants();
         
         // food. hold withing limits
-        if(m_foodInBelly > getSize() / 2.0f)
-            m_foodInBelly = getSize() / 2.0f;        
+        if(m_foodInBelly > getSize() / 4.0f)
+            m_foodInBelly = getSize() / 4.0f;        
         if (m_foodInBelly > 0.0f){
             m_energy +=  m_metabolism * dt;
             m_foodInBelly -= m_metabolism * dt;
@@ -116,7 +116,7 @@ public class Bacteria {
      
     public Nutrient Eat(float dt){
 
-        float bite = getSize() * 0.1f * dt;
+        float bite = getSize() * 0.05f * dt;
         m_foodInBelly += bite;
         m_targetFood.eatOf(bite);
         return m_targetFood;
@@ -129,6 +129,7 @@ public class Bacteria {
         tmp.setPosition( HelperStuff.getPosWithin(getPosition(), 
                          getSize() + tmp.getSize()));
         
+        m_foodInBelly = getSize() / 8.0f;
         m_energy = m_maxEnergy * 0.5f;
         m_health = m_maxHealth * 0.5f;
         
@@ -139,7 +140,7 @@ public class Bacteria {
     {
         if(m_targetFood == null)
             return;
-        float energyLoss = 0.7f *  getMass() * (float)Math.pow(m_speed, 2) * dt;
+        float energyLoss = getMass() * (float)Math.pow(m_speed, 2) * dt;
         //System.out.println(energyLoss);
         m_energy -=energyLoss *0.1;
         
@@ -197,7 +198,7 @@ public class Bacteria {
     }
     
     public float getMass(){
-        return m_shape.getRadius() * 0.01f + m_shape.getOutlineThickness() * 0.1f;
+        return m_shape.getRadius() * 0.05f + m_shape.getOutlineThickness() * 0.1f;
     }
     
     private DNA getDna(){
@@ -210,6 +211,14 @@ public class Bacteria {
     
     public int getGeneration(){
         return m_generation;
+    }
+    
+    public boolean haveFood(){
+        return m_targetFood != null;
+    }
+
+    public void setFood(Nutrient food){
+        m_targetFood = food;;
     }
     
     private CircleShape m_shape;

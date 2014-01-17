@@ -32,7 +32,7 @@ public class Nutrient {
     public void update(float dt){
         //grow
         if(!m_isEaten){
-            m_density += 0.01 * dt;
+            m_density += 0.005 * dt;
             
             if (m_density > 0.2f)
                 m_density = 0.2f;

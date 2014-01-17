@@ -50,7 +50,7 @@ public class NutrientHolder {
         if(m_nextNutrient <= m_foodClock){
             createRandomNutrient();
             m_foodClock = 0.0f;
-            m_nextNutrient = (float)Math.random() * 0.5f;
+            m_nextNutrient = (float)Math.random() * 2.f;
         }
         else
             m_foodClock += dt;
@@ -60,20 +60,33 @@ public class NutrientHolder {
         float closestDist = Float.MAX_VALUE;
         float dist;
         Nutrient closest = null;
+        Nutrient SeccondClosest = null;
         for(Nutrient food : m_nutrient){
             dist = HelperStuff.distance(pos, food.getPosition()) - food.getSize();
             if(dist < closestDist){
+                SeccondClosest = closest;
                 closest = food;
                 closestDist = dist;
             }
         }
-        return closest;
+        if(Math.random() > 0.75f)
+            return closest;
+        else
+            return SeccondClosest;
     }
     
     public void updateNutrientWith(Nutrient newOne){
         for(Nutrient food : m_nutrient)
             if(food.getId() == newOne.getId())
                 m_nutrient.set(m_nutrient.indexOf(food), newOne);
+    }
+    
+    public Nutrient getNutrient(int id){
+        for(Nutrient food : m_nutrient)
+            if(food.getId() == id)
+                return food;
+        
+        return null;
     }
     
     public void draw(RenderWindow window){

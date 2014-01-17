@@ -26,8 +26,8 @@ public class PetriDish {
         m_dishShape.setPosition(pos.x, pos.y);
         m_centre = new Vector2f(pos.x + radius, pos.y + radius);
         
-        m_population = new Population(10, this);
-        m_nutrientHolder = new NutrientHolder(20, this);
+        m_population = new Population(30, this);
+        m_nutrientHolder = new NutrientHolder(50, this);
     }
     
     public void draw(RenderWindow window){

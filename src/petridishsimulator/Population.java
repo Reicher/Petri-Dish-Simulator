@@ -31,7 +31,10 @@ public class Population {
         Bacteria newTmp;
         
         for(Bacteria bacTmp : m_bacteria){
-            bacTmp.update(dt, allTheFood.getClosestNutrient(bacTmp.getPosition()));
+            if( bacTmp.haveFood())
+                bacTmp.update(dt, allTheFood);
+            else
+                bacTmp.setFood(findFood(bacTmp, allTheFood));
 
             if(bacTmp.getActivity() == Bacteria.Activity.EAT){
                 Nutrient tmp = bacTmp.Eat(dt);
@@ -60,6 +63,10 @@ public class Population {
             if(bacTmp.getActivity() == Bacteria.Activity.DECAYED)
                 bacIt.remove();
         }
+    }
+    
+    public Nutrient findFood(Bacteria bacteria, NutrientHolder allFood){
+        return allFood.getClosestNutrient(bacteria.getPosition());
     }
     
     public int[] getFenotypeSpreed(DNA.Trait fenotype){

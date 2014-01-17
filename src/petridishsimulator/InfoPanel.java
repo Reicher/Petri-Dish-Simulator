@@ -34,33 +34,44 @@ public class InfoPanel extends Panel {
             m_headerText.setPosition(Vector2f.add(m_position, new Vector2f(45, 10)));
             m_headerText.setStyle(Text.UNDERLINED);
             
+            m_versionNrText = new Text("v 0.3", m_headerFont, 30);
+            m_versionNrText.setColor(Color.BLACK);
+            m_versionNrText.setPosition(Vector2f.add(m_position, new Vector2f(110, 100)));
+            
             m_populationSizeText= new Text("Population: ", m_headerFont, 27);
             m_populationSizeText.setColor(Color.BLACK);
-            m_populationSizeText.setPosition(Vector2f.add(m_position, new Vector2f(20, 140)));
+            m_populationSizeText.setPosition(Vector2f.add(m_position, new Vector2f(20, 150)));
             
             m_nutrientSizeText = new Text("Nutrients: ", m_headerFont, 27);
             m_nutrientSizeText.setColor(Color.BLACK);
-            m_nutrientSizeText.setPosition(Vector2f.add(m_position, new Vector2f(20, 180)));
+            m_nutrientSizeText.setPosition(Vector2f.add(m_position, new Vector2f(20, 190)));
             
             m_generations = new Text("Generations: ", m_headerFont, 27);
             m_generations.setColor(Color.BLACK);
-            m_generations.setPosition(Vector2f.add(m_position, new Vector2f(20, 220)));
+            m_generations.setPosition(Vector2f.add(m_position, new Vector2f(20, 230)));
             
             m_oldestGenerationAlive = new Text("Oldest alive: ", m_headerFont, 27);
             m_oldestGenerationAlive.setColor(Color.BLACK);
-            m_oldestGenerationAlive.setPosition(Vector2f.add(m_position, new Vector2f(20, 260)));
+            m_oldestGenerationAlive.setPosition(Vector2f.add(m_position, new Vector2f(20, 270)));
             
-            m_traitViewer = new TraitViewer(Vector2f.add(m_position, new Vector2f(25, 320)));
+            m_traitViewer = new TraitViewer(Vector2f.add(m_position, new Vector2f(25, 330)));
+            
+            m_byMe = new Text("By Robin Reicher", m_headerFont, 25);
+            m_byMe.setColor(Color.BLACK);
+            m_byMe.setPosition(Vector2f.add(m_position, new Vector2f(20, 560)));
+            
         }
         
         public void draw(RenderWindow window){
             super.draw(window);
             
             window.draw(m_headerText);
+            window.draw(m_versionNrText);
             window.draw(m_populationSizeText);
             window.draw(m_nutrientSizeText);
             window.draw(m_generations);
             window.draw(m_oldestGenerationAlive);
+            window.draw(m_byMe);
             m_traitViewer.draw(window);
         }
 
@@ -100,6 +111,8 @@ public class InfoPanel extends Panel {
         }
         
     private Text m_headerText;
+    private Text m_versionNrText;
+    
     private Text m_populationSizeText;
     private Text m_nutrientSizeText;
     private Font m_headerFont;
@@ -109,5 +122,7 @@ public class InfoPanel extends Panel {
     private Text m_oldestGenerationAlive;
     
     private TraitViewer m_traitViewer; 
+    
+    private Text m_byMe;
     
 }

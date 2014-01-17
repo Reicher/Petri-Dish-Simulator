@@ -101,6 +101,10 @@ public class SwitchButton {
         }        
     }
     
+    public Vector2f getUpperRightCorner(){
+        return Vector2f.add(m_shape.getPosition(), new Vector2f(m_shape.getSize().x, 0)); 
+    }
+    
     private Text m_buttonText;
     private Font m_buttonFont;
     private RectangleShape m_shape;
