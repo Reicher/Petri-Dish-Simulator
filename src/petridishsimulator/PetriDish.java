@@ -7,7 +7,6 @@ package petridishsimulator;
 import org.jsfml.graphics.*;
 import org.jsfml.system.*;
 
-import java.util.*;
 
 /**
  *
@@ -64,4 +63,5 @@ public class PetriDish {
     
     public Population m_population;
     public NutrientHolder m_nutrientHolder;
+
 }

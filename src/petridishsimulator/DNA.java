@@ -111,16 +111,16 @@ public class DNA {
                     m_maxLimit[fenotype.ordinal()] = 255.0f;
                 break;
                 case MUTATION_CHANCE:
-                    m_minLimit[fenotype.ordinal()] = 0.1f;
+                    m_minLimit[fenotype.ordinal()] = 0.5f;
+                    m_maxLimit[fenotype.ordinal()] = 0.9f;
+                    break;
+                case MUTATION_POWER:
+                    m_minLimit[fenotype.ordinal()] = 0.5f;
                     m_maxLimit[fenotype.ordinal()] = 0.9f;
                     break;
                 case METABOLISM:
                     m_minLimit[fenotype.ordinal()] = 0.1f;
                     m_maxLimit[fenotype.ordinal()] = 1.0f;
-                    break;
-                case MUTATION_POWER:
-                    m_minLimit[fenotype.ordinal()] = 0.1f;
-                    m_maxLimit[fenotype.ordinal()] = 0.9f;
                     break;
                 // END OF RANDOM FENOTYPES
                 case MAX_HEALTH:

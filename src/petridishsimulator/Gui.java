@@ -22,7 +22,8 @@ public class Gui {
         
         //Create Play Panel
         m_playPanel = new PlayPanel(new Vector2f(500, 500), 
-                                    new Vector2f(0, 0));
+                                    new Vector2f(0, 0), 
+                                    window);
         
         //Create Time Panel
         m_timePanel = new TimePanel(new Vector2f(500, 100), 
@@ -58,6 +59,9 @@ public class Gui {
                     m_timePanel.clickedSomewhere(event.asMouseEvent());
                     m_playPanel.clickedSomewhere(event.asMouseEvent());
                     m_infoPanel.clickedSomewhere(event.asMouseEvent());
+                    break;
+                case MOUSE_WHEEL_MOVED:
+                    m_playPanel.zoom(event.asMouseWheelEvent().delta);
                     break;
             }
         }

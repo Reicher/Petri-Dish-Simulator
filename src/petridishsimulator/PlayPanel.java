@@ -15,7 +15,7 @@ import org.jsfml.system.Vector2f;
  * @author regen
  */
 public class PlayPanel extends Panel{
-    public PlayPanel(Vector2f size, Vector2f position){
+    public PlayPanel(Vector2f size, Vector2f position, RenderWindow window){
         super(size, position);
         
         m_petriDish= new PetriDish(400.0f, new Vector2f(50.0f, 50.0f));
@@ -41,17 +41,28 @@ public class PlayPanel extends Panel{
         m_fpsText= new Text("FPS: ", m_timeFont, 30);
         m_fpsText.setColor(Color.BLACK);
         m_fpsText.setPosition( new Vector2f(350.0f, 5.0f));
+      
+        
+        m_defaultView = window.getDefaultView();
+        m_currentView = new View(new Vector2f(400, 300), new Vector2f(800, 600));
+        
+        m_zoom = 0;
     }
     
     public void draw(RenderWindow window)
     {
         super.draw(window);
+        window.setView(m_currentView);
+       
         m_petriDish.draw(window);
+        
+        window.setView(m_defaultView);
         
         window.draw(m_timeText);
         
         if(m_showGps)
             window.draw(m_fpsText);
+ 
     }
     
     public void update(float dt){
@@ -71,6 +82,11 @@ public class PlayPanel extends Panel{
         }
         
         m_fpsSecondUpdate += dt;
+        
+        // View changes
+        m_currentView.setSize(800- m_zoom*10, 600 - m_zoom*10);
+        m_currentView.setCenter(400 - m_zoom, 300 - m_zoom);
+        
     }
     
     public void toggleFps()
@@ -98,7 +114,16 @@ public class PlayPanel extends Panel{
     public int getOldestGeneration(){
         return m_petriDish.m_population.getOldestGeneration();
     }
-            
+
+    public void resetView(){
+        m_currentView = new View(m_defaultView.getCenter(), m_defaultView.getSize());
+    }
+    
+    public void zoom(int delta){
+        m_zoom += delta;
+        System.out.println("delta: " + delta + "    zoom: " + m_zoom);
+    }
+    
     private PetriDish m_petriDish;
     private Time m_gameTime;
     private Text m_timeText;
@@ -106,5 +131,9 @@ public class PlayPanel extends Panel{
     private float m_fpsSecondUpdate;
     private Text m_fpsText;
     private boolean m_showGps;
+        
+    private ConstView m_defaultView;
+    private View m_currentView;
+    private int m_zoom;
     
 }

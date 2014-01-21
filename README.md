@@ -10,8 +10,7 @@ Controls:
 
 
 Next To do's:
-* Completely re-organize Bacteria, create a "population" class
-* Print out more in the infoPanel
 * Make the dish area movable with pan and zoom.
+* Be able to select a bacteria and see info about it
 * Fine tune how the genes should interact with speed, eating pace etc.
 * Refactor code...
