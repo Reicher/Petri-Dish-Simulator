@@ -10,6 +10,8 @@ import org.jsfml.graphics.*;
 import org.jsfml.system.Time;
 
 import org.jsfml.system.Vector2f;
+import org.jsfml.system.Vector2i;
+import org.jsfml.window.event.MouseEvent;
 /**
  *
  * @author regen
@@ -47,6 +49,8 @@ public class PlayPanel extends Panel{
         m_currentView = new View(new Vector2f(400, 300), new Vector2f(800, 600));
         
         m_zoom = 0;
+        m_leftMouseHold = false;
+        m_currentPan = m_holdMousePos = m_pan = Vector2i.ZERO;
     }
     
     public void draw(RenderWindow window)
@@ -84,9 +88,9 @@ public class PlayPanel extends Panel{
         m_fpsSecondUpdate += dt;
         
         // View changes
-        m_currentView.setSize(800- m_zoom*10, 600 - m_zoom*10);
-        m_currentView.setCenter(400 - m_zoom, 300 - m_zoom);
-        
+        m_currentView.setSize(800 - m_zoom * 10, 600 - m_zoom * 10);
+        m_currentView.setCenter(400 - m_zoom + m_pan.x + m_currentPan.x, 
+                                300 - m_zoom + m_pan.y + m_currentPan.y);
     }
     
     public void toggleFps()
@@ -121,7 +125,32 @@ public class PlayPanel extends Panel{
     
     public void zoom(int delta){
         m_zoom += delta;
-        System.out.println("delta: " + delta + "    zoom: " + m_zoom);
+    }
+    
+    @Override
+    public void clickedSomewhere(MouseEvent mouseEvent){
+        m_leftMouseHold = false;
+        m_pan = Vector2i.add(m_pan, m_currentPan);
+        m_currentPan = Vector2i.ZERO;
+    }
+    
+    @Override
+    public void holdSomewhere(MouseEvent mouseEvent){
+        // Is inside 
+        if(mouseEvent.position.x > m_size.x && mouseEvent.position.y > m_size.y)
+            return;
+        m_leftMouseHold = true;
+        m_holdMousePos = mouseEvent.position;
+    }
+    
+    @Override
+    public void MouseMoved(MouseEvent mouseEvent){
+        // Is inside 
+        if(mouseEvent.position.x > m_size.x && mouseEvent.position.y > m_size.y)
+            return;
+  
+        if(m_leftMouseHold)
+            m_currentPan = Vector2i.sub(m_holdMousePos, mouseEvent.position);
     }
     
     private PetriDish m_petriDish;
@@ -135,5 +164,10 @@ public class PlayPanel extends Panel{
     private ConstView m_defaultView;
     private View m_currentView;
     private int m_zoom;
+
+    private boolean m_leftMouseHold;
+    private Vector2i m_holdMousePos;
+    private Vector2i m_currentPan;
+    private Vector2i m_pan;
     
 }

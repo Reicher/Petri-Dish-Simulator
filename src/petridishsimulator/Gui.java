@@ -31,7 +31,7 @@ public class Gui {
         
         //Create Time Panel
         m_infoPanel = new InfoPanel(new Vector2f(300, 600), 
-                                    new Vector2f(500, 0));        
+                                    new Vector2f(500, 0));       
     }
     
     public void draw(){
@@ -60,8 +60,14 @@ public class Gui {
                     m_playPanel.clickedSomewhere(event.asMouseEvent());
                     m_infoPanel.clickedSomewhere(event.asMouseEvent());
                     break;
+                case MOUSE_BUTTON_PRESSED:
+                    m_playPanel.holdSomewhere(event.asMouseEvent());
+                    break;
                 case MOUSE_WHEEL_MOVED:
                     m_playPanel.zoom(event.asMouseWheelEvent().delta);
+                    break;
+                case MOUSE_MOVED:
+                    m_playPanel.MouseMoved(event.asMouseEvent());
                     break;
             }
         }
@@ -82,7 +88,7 @@ public class Gui {
         
         
     }
-    
+
     RenderWindow m_window; 
     
     PlayPanel m_playPanel;

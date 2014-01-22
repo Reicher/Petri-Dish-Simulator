@@ -6,11 +6,14 @@ Darwinism on a plate! A few bacteria with random genome is placed on a Petri dis
 This is my first take on java and the JFSML library (http://jsfml.org/).
 
 Controls:
-* 'P' = Pause
+* 'P' 		= Pause
+* 'Scroll' 	= Camera Zoom
+* 'Left/Right'  = Camera Pan
 
 
 Next To do's:
-* Make the dish area movable with pan and zoom.
+* Add limits to the camera pan
+* Prevent the camera zoom to fuck up
 * Be able to select a bacteria and see info about it
 * Fine tune how the genes should interact with speed, eating pace etc.
 * Refactor code...

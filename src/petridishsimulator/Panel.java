@@ -38,5 +38,14 @@ public class Panel {
         
     }
     
+    public void holdSomewhere(MouseEvent mouseEvent){
+        
+    }
+    
+    public void MouseMoved(MouseEvent mouseEvent){
+        
+    }
+    
+    
     public void update(float dt){}
 }
